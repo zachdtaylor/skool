@@ -72,6 +72,27 @@ defmodule SkoolWeb.Router do
   end
 
   scope "/", SkoolWeb do
+    pipe_through [:browser, :require_authenticated_user]
+
+    live_session :courses,
+      on_mount: [{SkoolWeb.UserAuth, :ensure_authenticated}] do
+      live "/courses", CourseLive.Index, :index
+      live "/courses/new", CourseLive.Index, :new
+      live "/courses/:id/edit", CourseLive.Index, :edit
+
+      live "/courses/:id", CourseLive.Show, :show
+      live "/courses/:id/show/edit", CourseLive.Show, :edit
+
+      live "/tasks", TaskLive.Index, :index
+      live "/tasks/new", TaskLive.Index, :new
+      live "/tasks/:id/edit", TaskLive.Index, :edit
+
+      live "/tasks/:id", TaskLive.Show, :show
+      live "/tasks/:id/show/edit", TaskLive.Show, :edit
+    end
+  end
+
+  scope "/", SkoolWeb do
     pipe_through [:browser]
 
     delete "/users/log_out", UserSessionController, :delete

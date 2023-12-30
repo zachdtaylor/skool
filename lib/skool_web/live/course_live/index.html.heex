@@ -1,0 +1,41 @@
+<.header>
+  Listing Courses
+  <:actions>
+    <.link patch={~p"/courses/new"}>
+      <.button>New Course</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table
+  id="courses"
+  rows={@streams.courses}
+  row_click={fn {_id, course} -> JS.navigate(~p"/courses/#{course}") end}
+>
+  <:col :let={{_id, course}} label="Name"><%= course.name %></:col>
+  <:action :let={{_id, course}}>
+    <div class="sr-only">
+      <.link navigate={~p"/courses/#{course}"}>Show</.link>
+    </div>
+    <.link patch={~p"/courses/#{course}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={{id, course}}>
+    <.link
+      phx-click={JS.push("delete", value: %{id: course.id}) |> hide("##{id}")}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.modal :if={@live_action in [:new, :edit]} id="course-modal" show on_cancel={JS.patch(~p"/courses")}>
+  <.live_component
+    module={SkoolWeb.CourseLive.FormComponent}
+    id={@course.id || :new}
+    title={@page_title}
+    action={@live_action}
+    course={@course}
+    patch={~p"/courses"}
+  />
+</.modal>
