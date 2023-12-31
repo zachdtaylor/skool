@@ -69,10 +69,6 @@ defmodule SkoolWeb.Router do
       live "/users/settings", UserSettingsLive, :edit
       live "/users/settings/confirm_email/:token", UserSettingsLive, :confirm_email
     end
-  end
-
-  scope "/", SkoolWeb do
-    pipe_through [:browser, :require_authenticated_user]
 
     live_session :courses,
       on_mount: [{SkoolWeb.UserAuth, :ensure_authenticated}] do
