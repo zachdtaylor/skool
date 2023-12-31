@@ -14,13 +14,19 @@
 
 <.back navigate={~p"/courses"}>Back to courses</.back>
 
-<.modal :if={@live_action == :edit} id="course-modal" show on_cancel={JS.patch(~p"/courses/#{@course}")}>
+<.modal
+  :if={@live_action == :edit}
+  id="course-modal"
+  show
+  on_cancel={JS.patch(~p"/courses/#{@course}")}
+>
   <.live_component
     module={SkoolWeb.CourseLive.FormComponent}
     id={@course.id}
     title={@page_title}
     action={@live_action}
     course={@course}
+    current_user={@current_user}
     patch={~p"/courses/#{@course}"}
   />
 </.modal>
