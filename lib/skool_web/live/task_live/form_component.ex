@@ -1,7 +1,7 @@
 defmodule SkoolWeb.TaskLive.FormComponent do
   use SkoolWeb, :live_component
 
-  alias Skool.Tasks
+  alias Skool.{Courses, Tasks}
 
   @impl true
   def render(assigns) do
@@ -19,8 +19,10 @@ defmodule SkoolWeb.TaskLive.FormComponent do
         phx-change="validate"
         phx-submit="save"
       >
+        <.input field={@form[:course_id]} type="select" label="Course" options={@courses} />
         <.input field={@form[:description]} type="text" label="Description" />
         <.input field={@form[:completed_at]} type="datetime-local" label="Completed at" />
+        <.input field={@form[:completed_by_id]} type="hidden" value={@current_user.id} />
         <:actions>
           <.button phx-disable-with="Saving...">Save Task</.button>
         </:actions>
@@ -36,7 +38,8 @@ defmodule SkoolWeb.TaskLive.FormComponent do
     {:ok,
      socket
      |> assign(assigns)
-     |> assign_form(changeset)}
+     |> assign_form(changeset)
+     |> assign_courses()}
   end
 
   @impl true
@@ -85,6 +88,14 @@ defmodule SkoolWeb.TaskLive.FormComponent do
 
   defp assign_form(socket, %Ecto.Changeset{} = changeset) do
     assign(socket, :form, to_form(changeset))
+  end
+
+  defp assign_courses(socket) do
+    assign(socket, :courses, Courses.list_courses() |> Enum.map(&to_option/1))
+  end
+
+  defp to_option(course) do
+    {course.name, course.id}
   end
 
   defp notify_parent(msg), do: send(self(), {__MODULE__, msg})

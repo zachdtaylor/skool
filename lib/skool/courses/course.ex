@@ -12,7 +12,7 @@ defmodule Skool.Courses.Course do
   @doc false
   def changeset(course, attrs) do
     course
-    |> cast(attrs, [:name])
-    |> validate_required([:name])
+    |> cast(attrs, [:name, :created_by_id])
+    |> validate_required([:name, :created_by_id])
   end
 end

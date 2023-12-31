@@ -20,6 +20,7 @@ defmodule SkoolWeb.CourseLive.FormComponent do
         phx-submit="save"
       >
         <.input field={@form[:name]} type="text" label="Name" />
+        <.input field={@form[:created_by_id]} type="hidden" value={@current_user.id} />
         <:actions>
           <.button phx-disable-with="Saving...">Save Course</.button>
         </:actions>

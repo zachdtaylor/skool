@@ -14,7 +14,7 @@ defmodule Skool.Tasks.Task do
   @doc false
   def changeset(task, attrs) do
     task
-    |> cast(attrs, [:description, :completed_at])
-    |> validate_required([:description, :completed_at])
+    |> cast(attrs, [:description, :completed_at, :completed_by_id, :course_id])
+    |> validate_required([:description, :completed_at, :completed_by_id, :course_id])
   end
 end

@@ -29,13 +29,19 @@
   </:action>
 </.table>
 
-<.modal :if={@live_action in [:new, :edit]} id="course-modal" show on_cancel={JS.patch(~p"/courses")}>
+<.modal
+  :if={@live_action in [:new, :edit]}
+  id="course-modal"
+  show
+  on_cancel={JS.patch(~p"/courses")}
+>
   <.live_component
     module={SkoolWeb.CourseLive.FormComponent}
     id={@course.id || :new}
     title={@page_title}
     action={@live_action}
     course={@course}
+    current_user={@current_user}
     patch={~p"/courses"}
   />
 </.modal>
