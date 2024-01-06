@@ -4,6 +4,7 @@ defmodule Skool.Courses.Course do
 
   schema "courses" do
     field :name, :string
+    field :description
     field :category, :string
     field :created_by_id, :id
     field :start_date, :date
@@ -16,7 +17,7 @@ defmodule Skool.Courses.Course do
   @doc false
   def changeset(course, attrs) do
     course
-    |> cast(attrs, [:name, :created_by_id])
-    |> validate_required([:name, :created_by_id])
+    |> cast(attrs, [:name, :description, :category, :start_date, :end_date, :created_by_id])
+    |> validate_required([:name, :start_date, :end_date, :created_by_id])
   end
 end

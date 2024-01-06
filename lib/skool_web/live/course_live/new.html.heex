@@ -1,0 +1,18 @@
+<div class="relative h-screen">
+  <header class="border-b border-b-slate-100 p-4 sticky">
+    <p class="text-sm font-bold">Create a New Course</p>
+  </header>
+  <div class="p-4">
+    <.form id="new-course-form" for={@form} class="flex flex-col gap-4" phx-submit="create">
+      <.input type="hidden" field={@form[:created_by_id]} value={@current_user.id} />
+      <.input type="text" field={@form[:name]} label="Name" />
+      <div class="grid grid-cols-2 gap-4">
+        <.input type="date" field={@form[:start_date]} label="Start Date" />
+        <.input type="date" field={@form[:end_date]} label="End Date" />
+      </div>
+    </.form>
+  </div>
+  <footer class="absolute bottom-0 border-t border-t-slate-100 flex justify-end w-full p-4">
+    <.button type="submit" form="new-course-form">Create</.button>
+  </footer>
+</div>

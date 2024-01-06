@@ -73,7 +73,8 @@ defmodule SkoolWeb.Router do
     live_session :courses,
       on_mount: [{SkoolWeb.UserAuth, :ensure_authenticated}] do
       live "/courses", CourseLive.Index, :index
-      live "/courses/new", CourseLive.Index, :new
+      live "/courses/new", CourseLive.New
+      live "/courses/:id/invite_collaborators", CourseLive.InviteCollaborators
       live "/courses/:id/edit", CourseLive.Index, :edit
 
       live "/courses/:id", CourseLive.Show, :show
