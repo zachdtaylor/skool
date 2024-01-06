@@ -4,7 +4,11 @@ defmodule Skool.Courses.Course do
 
   schema "courses" do
     field :name, :string
+    field :category, :string
     field :created_by_id, :id
+    field :start_date, :date
+    field :end_date, :date
+    field :deleted_at, :utc_datetime
 
     timestamps(type: :utc_datetime)
   end
