@@ -52,6 +52,7 @@ defmodule SkoolWeb do
   def live_view do
     quote do
       use Phoenix.LiveView,
+        container: {:div, class: "h-screen"},
         layout: {SkoolWeb.Layouts, :app}
 
       unquote(html_helpers())
