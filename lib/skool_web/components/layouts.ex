@@ -6,15 +6,17 @@ defmodule SkoolWeb.Layouts do
   attr :icon, :string, doc: "The name of the icon to render"
   attr :text, :string, doc: "The text to render"
   attr :href, :string, doc: "The href to link to"
+  attr :navigate, :string, doc: "The path to navigate to"
   attr :method, :string, doc: "The method to use for the link", default: "get"
 
   defp app_nav_link(assigns) do
     ~H"""
-    <li class="p-2 grid grid-cols-[min-content_1fr] items-center gap-x-2 hover:bg-white transition-colors duration-300">
+    <li class="p-2 grid grid-cols-[min-content_1fr] items-center gap-x-2 hover:bg-white transition-colors duration-300 rounded-sm">
       <.icon name={@icon} class="text-zinc-900" />
       <.link
         class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold"
-        navigate={@href}
+        navigate={if assigns[:navigate], do: @navigate}
+        href={if assigns[:href], do: @href}
         method={@method}
       >
         <%= @text %>

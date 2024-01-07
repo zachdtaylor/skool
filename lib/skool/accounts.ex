@@ -10,6 +10,21 @@ defmodule Skool.Accounts do
 
   ## Database getters
 
+  def search_users(term, user_to_exclude \\ nil) when is_binary(term) do
+    query =
+      from(u in User,
+        where: ilike(u.email, ^"%#{term}%"),
+        or_where: ilike(u.full_name, ^"%#{term}%"),
+        limit: 5
+      )
+      |> maybe_exclude_user(user_to_exclude)
+
+    Repo.all(query)
+  end
+
+  defp maybe_exclude_user(query, nil), do: query
+  defp maybe_exclude_user(query, %User{} = user), do: where(query, [u], u.id != ^user.id)
+
   @doc """
   Gets a user by email.
 

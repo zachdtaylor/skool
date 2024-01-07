@@ -8,8 +8,12 @@
       </div>
       <%= if @current_user do %>
         <ul class="flex flex-col gap-1 px-2">
-          <.app_nav_link icon="hero-clipboard-document-list" text="Courses" href={~p"/courses"} />
-          <.app_nav_link icon="hero-list-bullet" text="Tasks" href={~p"/tasks"} />
+          <.app_nav_link
+            icon="hero-clipboard-document-list"
+            text="Courses"
+            navigate={~p"/courses"}
+          />
+          <.app_nav_link icon="hero-list-bullet" text="Tasks" navigate={~p"/tasks"} />
         </ul>
       <% end %>
     </div>

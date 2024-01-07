@@ -6,7 +6,7 @@ defmodule Skool.Courses do
   import Ecto.Query, warn: false
   alias Skool.Repo
 
-  alias Skool.Courses.Course
+  alias Skool.Courses.{Course, CourseCollaborator}
 
   @doc """
   Returns the list of courses.
@@ -100,5 +100,24 @@ defmodule Skool.Courses do
   """
   def change_course(%Course{} = course, attrs \\ %{}) do
     Course.changeset(course, attrs)
+  end
+
+  @doc """
+  Adds a user as a collaborator on a course.
+  """
+  def invite_collaborator(course_id, collaborator_id) do
+    %CourseCollaborator{}
+    |> CourseCollaborator.changeset(%{course_id: course_id, collaborator_id: collaborator_id})
+    |> Repo.insert()
+  end
+
+  @doc """
+  Disinvite a user as a collaborator on a course.
+  """
+  def disinvite_collaborator(course_id, collaborator_id) do
+    from(cc in CourseCollaborator,
+      where: cc.course_id == ^course_id and cc.collaborator_id == ^collaborator_id
+    )
+    |> Repo.delete_all()
   end
 end
