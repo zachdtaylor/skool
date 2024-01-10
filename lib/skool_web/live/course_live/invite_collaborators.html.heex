@@ -1,8 +1,8 @@
-<div class="h-full flex flex-col">
-  <header class="border-b border-b-slate-100 p-4 sticky bg-white">
-    <p class="text-md font-bold">Create a New Course</p>
-    <p class="text-xs"><%= @course_name %></p>
-  </header>
+<div class="h-full flex flex-col relative">
+  <.header>
+    Create a New Course
+    <:subtitle><%= @course_name %></:subtitle>
+  </.header>
   <div class="p-4 flex flex-col gap-8 flex-1">
     <p class="text-sm">
       If this is a goal you're working on with someone else, you can invite them to help you create the course.
@@ -49,4 +49,9 @@
       </div>
     </div>
   </div>
+  <footer class="absolute bottom-0 border-t border-t-slate-100 flex justify-end w-full p-4 bg-white">
+    <.link navigate={~p"/courses/#{@course_id}/edit"}>
+      <.button>Continue</.button>
+    </.link>
+  </footer>
 </div>

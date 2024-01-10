@@ -1,7 +1,7 @@
 <div class="relative h-screen">
-  <header class="border-b border-b-slate-100 p-4 sticky">
-    <p class="text-md font-bold">Create a New Course</p>
-  </header>
+  <.header>
+    Create a New Course
+  </.header>
   <div class="p-4">
     <.form id="new-course-form" for={@form} class="flex flex-col gap-4" phx-submit="create">
       <.input type="hidden" field={@form[:created_by_id]} value={@current_user.id} />

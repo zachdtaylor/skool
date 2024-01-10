@@ -1,0 +1,21 @@
+<div class="h-full flex flex-col relative">
+  <.header>
+    Edit Course
+    <:subtitle><%= @course_name %></:subtitle>
+  </.header>
+  <div class="p-4">
+    <.form id="edit-course-form" for={@form} class="flex flex-col gap-4" phx-submit="save">
+      <.input type="hidden" field={@form[:id]} />
+      <.input type="hidden" field={@form[:created_by_id]} />
+      <.input type="text" field={@form[:name]} label="Name" />
+      <div class="grid grid-cols-2 gap-4">
+        <.input type="date" field={@form[:start_date]} label="Start Date" />
+        <.input type="date" field={@form[:end_date]} label="End Date" />
+      </div>
+      <.input type="textarea" field={@form[:description]} label="Description" />
+    </.form>
+  </div>
+  <.footer>
+    <.button type="submit" form="edit-course-form">Save</.button>
+  </.footer>
+</div>

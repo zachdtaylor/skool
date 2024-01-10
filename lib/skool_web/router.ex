@@ -75,7 +75,7 @@ defmodule SkoolWeb.Router do
       live "/courses", CourseLive.Index, :index
       live "/courses/new", CourseLive.New
       live "/courses/:id/invite_collaborators", CourseLive.InviteCollaborators
-      live "/courses/:id/edit", CourseLive.Index, :edit
+      live "/courses/:id/edit", CourseLive.Edit
 
       live "/courses/:id", CourseLive.Show, :show
       live "/courses/:id/show/edit", CourseLive.Show, :edit

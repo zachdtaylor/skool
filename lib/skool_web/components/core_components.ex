@@ -427,17 +427,38 @@ defmodule SkoolWeb.CoreComponents do
 
   def header(assigns) do
     ~H"""
-    <header class={[@actions != [] && "flex items-center justify-between gap-6", @class]}>
+    <header class={[
+      "border-b border-b-slate-100 p-4 sticky bg-white",
+      @actions != [] &&
+        "flex items-center justify-between gap-6",
+      @class
+    ]}>
       <div>
-        <h1 class="text-lg font-semibold leading-8 text-zinc-800">
+        <h1 class="text-md font-bold">
           <%= render_slot(@inner_block) %>
         </h1>
-        <p :if={@subtitle != []} class="mt-2 text-sm leading-6 text-zinc-600">
+        <p :if={@subtitle != []} class="text-xs">
           <%= render_slot(@subtitle) %>
         </p>
       </div>
       <div class="flex-none"><%= render_slot(@actions) %></div>
     </header>
+    """
+  end
+
+  @doc """
+  Renders a footer.
+  """
+  slot :inner_block, required: true
+
+  def footer(assigns) do
+    ~H"""
+    <footer class={[
+      "absolute bottom-0 border-t border-t-slate-100",
+      "flex justify-end w-full p-4 bg-white"
+    ]}>
+      <%= render_slot(@inner_block) %>
+    </footer>
     """
   end
 
