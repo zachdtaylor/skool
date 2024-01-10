@@ -87,6 +87,7 @@ defmodule SkoolWeb do
       # Core UI components and translation
       import SkoolWeb.CoreComponents
       import SkoolWeb.Gettext
+      import SkoolWeb.HTMLHelpers
 
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS

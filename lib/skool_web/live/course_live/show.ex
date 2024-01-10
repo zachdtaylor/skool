@@ -10,12 +10,11 @@ defmodule SkoolWeb.CourseLive.Show do
 
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
+    course = Courses.get_course!(id)
+
     {:noreply,
      socket
-     |> assign(:page_title, page_title(socket.assigns.live_action))
-     |> assign(:course, Courses.get_course!(id))}
+     |> assign(:page_title, course.name)
+     |> assign(:course, course)}
   end
-
-  defp page_title(:show), do: "Show Course"
-  defp page_title(:edit), do: "Edit Course"
 end

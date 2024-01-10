@@ -1,32 +1,17 @@
-<.header>
-  Course <%= @course.id %>
-  <:subtitle>This is a course record from your database.</:subtitle>
-  <:actions>
-    <.link navigate={~p"/courses/#{@course}/edit"} phx-click={JS.push_focus()}>
-      <.button>Edit course</.button>
-    </.link>
-  </:actions>
-</.header>
-
-<.list>
-  <:item title="Name"><%= @course.name %></:item>
-</.list>
-
-<.back navigate={~p"/courses"}>Back to courses</.back>
-
-<.modal
-  :if={@live_action == :edit}
-  id="course-modal"
-  show
-  on_cancel={JS.patch(~p"/courses/#{@course}")}
->
-  <.live_component
-    module={SkoolWeb.CourseLive.FormComponent}
-    id={@course.id}
-    title={@page_title}
-    action={@live_action}
-    course={@course}
-    current_user={@current_user}
-    patch={~p"/courses/#{@course}"}
-  />
-</.modal>
+<div class="h-full flex flex-col relative">
+  <.header>
+    <%= @course.name %>
+    <:subtitle>
+      <%= format_date(@course.start_date) %> - <%= format_date(@course.end_date) %>
+    </:subtitle>
+    <:actions>
+      <.link navigate={~p"/courses/#{@course}/edit"}>
+        <.button>Edit course</.button>
+      </.link>
+      <.link navigate={~p"/courses/#{@course}/invite_collaborators"}>
+        <.button>Manage Collaborators</.button>
+      </.link>
+    </:actions>
+  </.header>
+  <div class="p-4"></div>
+</div>
