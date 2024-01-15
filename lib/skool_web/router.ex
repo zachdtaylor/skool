@@ -89,13 +89,6 @@ defmodule SkoolWeb.Router do
 
       live "/courses/:id", CourseLive.Show, :show
       live "/courses/:id/show/edit", CourseLive.Show, :edit
-
-      live "/tasks", TaskLive.Index, :index
-      live "/tasks/new", TaskLive.Index, :new
-      live "/tasks/:id/edit", TaskLive.Index, :edit
-
-      live "/tasks/:id", TaskLive.Show, :show
-      live "/tasks/:id/show/edit", TaskLive.Show, :edit
     end
   end
 
