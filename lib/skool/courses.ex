@@ -6,7 +6,41 @@ defmodule Skool.Courses do
   import Ecto.Query, warn: false
   alias Skool.Repo
 
-  alias Skool.Courses.{Course, CourseCollaborator}
+  alias Skool.Courses.{Assignment, ChecklistItem, Course, CourseCollaborator}
+
+  @doc """
+  Returns the list of checklist items for an assignment.
+  """
+  def load_checklist_items(%Assignment{} = assignment) do
+    from(ci in ChecklistItem,
+      where: ci.assignment_id == ^assignment.id
+    )
+    |> Repo.all()
+  end
+
+  @doc """
+  Returns the list of assignments for a course.
+  """
+  def load_assignments(%Course{} = course) do
+    from(a in Assignment,
+      where: a.course_id == ^course.id
+    )
+    |> Repo.all()
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking assignment changes.
+  """
+  def change_assignment(%Assignment{} = assignment, attrs \\ %{}) do
+    Assignment.changeset(assignment, attrs)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking checklist item changes.
+  """
+  def change_checklist_item(%ChecklistItem{} = checklist_item, attrs \\ %{}) do
+    ChecklistItem.changeset(checklist_item, attrs)
+  end
 
   @doc """
   Returns the list of courses.
@@ -38,6 +72,74 @@ defmodule Skool.Courses do
   def get_course!(id), do: Repo.get!(Course, id)
 
   @doc """
+  Gets a single assignment.
+
+  Raises `Ecto.NoResultsError` if the Assignment does not exist.
+
+  ## Examples
+
+      iex> get_assignment!(123)
+      %Assignment{}
+
+      iex> get_assignment!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_assignment!(id), do: Repo.get!(Assignment, id)
+
+  @doc """
+  Gets a single checklist item.
+
+  Raises `Ecto.NoResultsError` if the ChecklistItem does not exist.
+
+  ## Examples
+
+      iex> get_checklist_item!(123)
+      %ChecklistItem{}
+
+      iex> get_checklist_item!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_checklist_item!(id), do: Repo.get!(ChecklistItem, id)
+
+  @doc """
+  Creates an assignment.
+
+  ## Examples
+
+      iex> create_assignment(%{field: value})
+      {:ok, %Assignment{}}
+
+      iex> create_assignment(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_assignment(attrs \\ %{}) do
+    %Assignment{}
+    |> Assignment.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Creates a checklist item.
+
+  ## Examples
+
+      iex> create_checklist_item(%{field: value})
+      {:ok, %ChecklistItem{}}
+
+      iex> create_checklist_item(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_checklist_item(attrs \\ %{}) do
+    %ChecklistItem{}
+    |> ChecklistItem.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
   Creates a course.
 
   ## Examples
@@ -53,6 +155,42 @@ defmodule Skool.Courses do
     %Course{}
     |> Course.changeset(attrs)
     |> Repo.insert()
+  end
+
+  @doc """
+  Updates an assignment.
+
+  ## Examples
+
+      iex> update_assignment(assignment, %{field: new_value})
+      {:ok, %Assignment{}}
+
+      iex> update_assignment(assignment, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_assignment(%Assignment{} = assignment, attrs) do
+    assignment
+    |> Assignment.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Updates a checklist item.
+
+  ## Examples
+
+      iex> update_checklist_item(checklist_item, %{field: new_value})
+      {:ok, %ChecklistItem{}}
+
+      iex> update_checklist_item(checklist_item, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_checklist_item(%ChecklistItem{} = checklist_item, attrs) do
+    checklist_item
+    |> ChecklistItem.changeset(attrs)
+    |> Repo.update()
   end
 
   @doc """
@@ -88,6 +226,20 @@ defmodule Skool.Courses do
   def delete_course(%Course{} = course) do
     Repo.delete(course)
   end
+
+  @doc """
+  Deletes an assignment.
+
+  ## Examples
+
+      iex> delete_assignment(course)
+      {:ok, %Course{}}
+
+      iex> delete_assignment(course)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_assignment(%Assignment{} = assignment), do: Repo.delete(assignment)
 
   @doc """
   Returns an `%Ecto.Changeset{}` for tracking course changes.

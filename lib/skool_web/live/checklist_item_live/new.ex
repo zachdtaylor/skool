@@ -1,0 +1,50 @@
+defmodule SkoolWeb.ChecklistItemLive.New do
+  use SkoolWeb, :live_view
+
+  alias Skool.Courses
+  alias Skool.Courses.ChecklistItem
+
+  @impl true
+  def mount(_params, _session, socket) do
+    {:ok, socket}
+  end
+
+  @impl true
+  def handle_params(%{"course_id" => course_id, "assignment_id" => assignment_id}, _, socket) do
+    course = Courses.get_course!(course_id)
+    assignment = Courses.get_assignment!(assignment_id)
+    changeset = Courses.change_checklist_item(%ChecklistItem{}, %{assignment_id: assignment_id})
+
+    {:noreply,
+     socket
+     |> assign(:page_title, "New Checklist Item")
+     |> assign(:assignment, assignment)
+     |> assign(:course, course)
+     |> assign_form(changeset)}
+  end
+
+  @impl true
+  def handle_event("validate", %{"checklist_item" => checklist_item_params}, socket) do
+    changeset = Courses.change_checklist_item(%ChecklistItem{}, checklist_item_params)
+    {:noreply, assign_form(socket, changeset)}
+  end
+
+  def handle_event("create", %{"checklist_item" => checklist_item_params}, socket) do
+    case Courses.create_checklist_item(checklist_item_params) do
+      {:ok, _checklist_item} ->
+        {:noreply,
+         push_navigate(socket,
+           to: ~p"/courses/#{socket.assigns.course}/assignments/#{socket.assigns.assignment}"
+         )}
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:noreply, assign_form(socket, changeset)}
+    end
+  end
+
+  defp assign_form(socket, %Ecto.Changeset{} = changeset) do
+    form = to_form(changeset, as: "checklist_item")
+
+    assign(socket, form: form)
+  end
+end

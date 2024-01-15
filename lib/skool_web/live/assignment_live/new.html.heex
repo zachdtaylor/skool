@@ -1,0 +1,46 @@
+<div class="h-full flex flex-col relative">
+  <.header>
+    New Assignment
+    <:subtitle>
+      <%= @course.name %>
+    </:subtitle>
+  </.header>
+  <div class="p-4">
+    <.form
+      for={@form}
+      id="new-assignment-form"
+      class="flex flex-col gap-4"
+      phx-change="validate"
+      phx-submit="create"
+    >
+      <.input type="hidden" field={@form[:course_id]} value={@course.id} />
+      <.input type="text" field={@form[:title]} label="Title" />
+      <.input
+        type="select"
+        field={@form[:kind]}
+        label="Kind"
+        options={Assignment.kinds()}
+        prompt="Select Kind"
+      />
+      <%= if @form[:kind].value == :recurring do %>
+        <div class="flex gap-2">
+          <div class="flex-1">
+            <.input type="date" field={@form[:start_date]} label="Start Date" />
+          </div>
+          <div class="flex-1">
+            <.input type="date" field={@form[:end_date]} label="End Date" />
+          </div>
+        </div>
+      <% else %>
+        <.input type="date" field={@form[:due_date]} label="Due Date" />
+      <% end %>
+      <.input type="number" field={@form[:grade_weight]} label="Grade Weight" step="0.01" />
+    </.form>
+  </div>
+  <footer class="absolute bottom-0 border-t border-t-slate-100 flex gap-2 justify-end w-full p-4">
+    <.link navigate={~p"/courses/#{@course.id}"}>
+      <.button>Back to Course</.button>
+    </.link>
+    <.button type="submit" form="new-assignment-form">Save</.button>
+  </footer>
+</div>

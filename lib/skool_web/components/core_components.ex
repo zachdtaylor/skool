@@ -90,6 +90,48 @@ defmodule SkoolWeb.CoreComponents do
   end
 
   @doc """
+  Renders a dropdown menu.
+  """
+  attr :id, :string, required: true
+
+  # slot :inner_block, required: true
+  slot :options, required: true
+
+  def dropdown(assigns) do
+    ~H"""
+    <div id={@id} class="relative">
+      <button
+        id={"#{@id}-button"}
+        phx-click={JS.toggle(to: "##{@id}-content")}
+        class="rounded-md border border-slate-200 w-10 h-10 grid grid-cols-1 items-center justify-items-center"
+      >
+        <.icon name="hero-ellipsis-horizontal" />
+      </button>
+      <div id={"#{@id}-content"} class="hidden shadow-md bg-white absolute right-0 p-2 mt-2">
+        <%= render_slot(@options) %>
+      </div>
+    </div>
+    """
+  end
+
+  @doc """
+  Renders a dropdown menu option.
+  """
+  attr :icon, :string, required: true
+  attr :text, :string, required: true
+
+  def dropdown_option(assigns) do
+    ~H"""
+    <div class="whitespace-nowrap p-2 hover:bg-slate-50 rounded-sm text-left grid grid-cols-[min-content_1fr] items-center gap-x-2">
+      <.icon name={"#{@icon}"} />
+      <p><%= @text %></p>
+    </div>
+    """
+  end
+
+  # [["toggle",{"display":null,"ins":[[],[],[]],"outs":[[],[],[]],"time":200,"to":"course-menu-content"}]]
+
+  @doc """
   Renders flash notices.
 
   ## Examples
@@ -424,25 +466,43 @@ defmodule SkoolWeb.CoreComponents do
   slot :inner_block, required: true
   slot :subtitle
   slot :actions
+  slot :tabs
 
   def header(assigns) do
     ~H"""
     <header class={[
       "border-b border-b-slate-100 p-4 sticky bg-white",
-      @actions != [] &&
-        "flex items-center justify-between gap-6",
+      "grid grid-cols-3 items-center",
       @class
     ]}>
       <div>
-        <h1 class="text-md font-bold">
-          <%= render_slot(@inner_block) %>
-        </h1>
+        <h1 class="text-md font-bold"><%= render_slot(@inner_block) %></h1>
         <p :if={@subtitle != []} class="text-xs">
           <%= render_slot(@subtitle) %>
         </p>
       </div>
-      <div class="flex-none"><%= render_slot(@actions) %></div>
+      <div class="justify-self-center">
+        <%= if @tabs != [] do %>
+          <div class="flex rounded-md border border-slate-200">
+            <%= render_slot(@tabs) %>
+          </div>
+        <% end %>
+      </div>
+      <div class="flex justify-end gap-2 self-end"><%= render_slot(@actions) %></div>
     </header>
+    """
+  end
+
+  @doc """
+  Renders a tab for a header.
+  """
+  slot :inner_block, required: true
+
+  def tab(assigns) do
+    ~H"""
+    <div class="bg-white text-center p-3 hover:bg-slate-50 rounded-md">
+      <%= render_slot(@inner_block) %>
+    </div>
     """
   end
 
@@ -495,7 +555,7 @@ defmodule SkoolWeb.CoreComponents do
 
     ~H"""
     <div class="overflow-y-auto px-4 sm:overflow-visible sm:px-0">
-      <table class="w-[40rem] mt-11 sm:w-full">
+      <table class="w-[40rem] mt-4 sm:w-full">
         <thead class="text-sm text-left leading-6 text-zinc-500">
           <tr>
             <th :for={col <- @col} class="p-0 pb-4 pr-6 font-normal"><%= col[:label] %></th>
@@ -552,13 +612,18 @@ defmodule SkoolWeb.CoreComponents do
   """
   slot :item, required: true do
     attr :title, :string, required: true
+    attr :if, :boolean
   end
 
   def list(assigns) do
     ~H"""
-    <div class="mt-14">
+    <div class="mt-4">
       <dl class="-my-4 divide-y divide-zinc-100">
-        <div :for={item <- @item} class="flex gap-4 py-4 text-sm leading-6 sm:gap-8">
+        <div
+          :for={item <- @item}
+          :if={Map.get(item, :if, true)}
+          class="flex gap-4 py-4 text-sm leading-6 sm:gap-8"
+        >
           <dt class="w-1/4 flex-none text-zinc-500"><%= item.title %></dt>
           <dd class="text-zinc-700"><%= render_slot(item) %></dd>
         </div>
