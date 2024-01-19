@@ -12,7 +12,7 @@ defmodule SkoolWeb.CourseLive.New do
   def handle_event("create", %{"course" => course}, socket) do
     case Courses.create_course(course) do
       {:ok, course} ->
-        {:noreply, push_navigate(socket, to: ~p"/courses/#{course.id}/invite_collaborators")}
+        {:noreply, push_navigate(socket, to: ~p"/courses/#{course.id}/collaborators/invite")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign_form(socket, changeset)}

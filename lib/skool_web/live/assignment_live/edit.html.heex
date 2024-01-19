@@ -31,6 +31,11 @@
     </.form>
   </div>
   <.footer>
-    <.button type="submit" form="edit-assignment-form">Save</.button>
+    <:left>
+      <.button phx-hook="GoBack">Cancel</.button>
+    </:left>
+    <:right>
+      <.button type="submit" form="edit-assignment-form">Save</.button>
+    </:right>
   </.footer>
 </div>

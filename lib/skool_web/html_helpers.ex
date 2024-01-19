@@ -1,9 +1,8 @@
 defmodule SkoolWeb.HTMLHelpers do
   alias Skool.Courses.Assignment
 
-  def format_date(date) do
-    Calendar.strftime(date, "%b %d, %Y")
-  end
+  def format_date(nil), do: nil
+  def format_date(date), do: Calendar.strftime(date, "%b %d, %Y")
 
   def capitalize(atom) when is_atom(atom) do
     atom

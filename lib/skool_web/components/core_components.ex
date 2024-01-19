@@ -509,15 +509,25 @@ defmodule SkoolWeb.CoreComponents do
   @doc """
   Renders a footer.
   """
-  slot :inner_block, required: true
+  slot :left
+  slot :right
 
   def footer(assigns) do
     ~H"""
     <footer class={[
       "absolute bottom-0 border-t border-t-slate-100",
-      "flex justify-end w-full p-4 bg-white"
+      "flex justify-between w-full p-4 bg-white"
     ]}>
-      <%= render_slot(@inner_block) %>
+      <div>
+        <%= if @left != [] do %>
+          <%= render_slot(@left) %>
+        <% end %>
+      </div>
+      <div>
+        <%= if @right != [] do %>
+          <%= render_slot(@right) %>
+        <% end %>
+      </div>
     </footer>
     """
   end

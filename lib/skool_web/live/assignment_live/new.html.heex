@@ -37,10 +37,14 @@
       <.input type="number" field={@form[:grade_weight]} label="Grade Weight" step="0.01" />
     </.form>
   </div>
-  <footer class="absolute bottom-0 border-t border-t-slate-100 flex gap-2 justify-end w-full p-4">
-    <.link navigate={~p"/courses/#{@course.id}"}>
-      <.button>Back to Course</.button>
-    </.link>
-    <.button type="submit" form="new-assignment-form">Save</.button>
-  </footer>
+  <.footer>
+    <:left>
+      <.link navigate={~p"/courses/#{@course.id}"}>
+        <.button>Back to Course</.button>
+      </.link>
+    </:left>
+    <:right>
+      <.button type="submit" form="new-assignment-form">Save</.button>
+    </:right>
+  </.footer>
 </div>

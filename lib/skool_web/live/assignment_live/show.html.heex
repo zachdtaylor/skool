@@ -65,9 +65,11 @@
       </.table>
     <% end %>
   </div>
-  <footer class="absolute bottom-0 border-t border-t-slate-100 flex justify-end w-full p-4">
-    <.link navigate={~p"/courses/#{@course}"}>
-      <.button>Back to Course</.button>
-    </.link>
-  </footer>
+  <.footer>
+    <:left>
+      <.link navigate={~p"/courses/#{@course}"}>
+        <.button>Back to Course</.button>
+      </.link>
+    </:left>
+  </.footer>
 </div>

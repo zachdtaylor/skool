@@ -1,4 +1,4 @@
-defmodule SkoolWeb.CourseLive.InviteCollaborators do
+defmodule SkoolWeb.CourseLive.Collaborators do
   use SkoolWeb, :live_view
 
   alias Skool.Accounts
@@ -15,8 +15,9 @@ defmodule SkoolWeb.CourseLive.InviteCollaborators do
      |> assign_collaborators(course)}
   end
 
-  def handle_params(%{"id" => id}, _url, socket) do
-    {:noreply, assign(socket, course_id: id)}
+  def handle_params(%{"id" => id}, url, socket) do
+    path = URI.parse(url).path
+    {:noreply, assign(socket, course_id: id, current_path: path)}
   end
 
   def handle_event("search", %{"value" => value}, socket) do
@@ -29,15 +30,23 @@ defmodule SkoolWeb.CourseLive.InviteCollaborators do
         course = Courses.get_course!(socket.assigns.course_id)
         {:noreply, socket |> assign_collaborators(course) |> assign_search_results(nil)}
 
-      {:error, :already_invited} ->
+      {:error, _} ->
         {:noreply, socket |> put_flash(:error, "User could not be invited.")}
     end
   end
 
   def handle_event("disinvite", %{"user_id" => user_id}, socket) do
-    Courses.disinvite_collaborator(socket.assigns.course_id, user_id)
-    course = Courses.get_course!(socket.assigns.course_id)
-    {:noreply, socket |> assign_collaborators(course) |> assign_search_results(nil)}
+    case Courses.disinvite_collaborator(socket.assigns.course_id, user_id) do
+      {0, _} ->
+        {:noreply,
+         socket
+         |> put_flash(:error, "Could not disinvite user")
+         |> push_navigate(to: socket.assigns.current_path)}
+
+      {n, _} when n > 0 ->
+        course = Courses.get_course!(socket.assigns.course_id)
+        {:noreply, socket |> assign_collaborators(course) |> assign_search_results(nil)}
+    end
   end
 
   defp assign_course_name(socket, course) do

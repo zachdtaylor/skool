@@ -39,9 +39,18 @@
           <%= @current_user.full_name %>
         </div>
         <%= for user <- @collaborators do %>
-          <div class="text-sm bg-white p-2 grid grid-cols-[1fr_min-content] items-center">
+          <div
+            id={"collaborator-#{user.id}"}
+            class="text-sm bg-white p-2 grid grid-cols-[1fr_min-content] items-center"
+          >
             <p><%= user.full_name %></p>
-            <button phx-click="disinvite" phx-value-user_id={user.id}>
+            <button
+              id={"remove-collaborator-#{user.id}"}
+              phx-hook="OptimisticRemove"
+              data-remove-id={"collaborator-#{user.id}"}
+              data-event="disinvite"
+              data-user_id={user.id}
+            >
               <.icon name="hero-x-mark" />
             </button>
           </div>
@@ -49,9 +58,17 @@
       </div>
     </div>
   </div>
-  <footer class="absolute bottom-0 border-t border-t-slate-100 flex justify-end w-full p-4 bg-white">
-    <.link navigate={~p"/courses/#{@course_id}/edit"}>
-      <.button>Continue</.button>
-    </.link>
-  </footer>
+  <.footer>
+    <:right>
+      <%= if @live_action == :invite do %>
+        <.link navigate={~p"/courses/#{@course_id}/edit"}>
+          <.button>Continue</.button>
+        </.link>
+      <% else %>
+        <.link navigate={~p"/courses/#{@course_id}"}>
+          <.button>Save</.button>
+        </.link>
+      <% end %>
+    </:right>
+  </.footer>
 </div>

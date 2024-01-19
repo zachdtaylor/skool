@@ -20,10 +20,14 @@
       <.input type="number" field={@form[:grade_weight]} label="Grade Weight" step="0.01" />
     </.form>
   </div>
-  <footer class="absolute bottom-0 border-t border-t-slate-100 flex gap-2 justify-end w-full p-4">
-    <.link navigate={~p"/courses/#{@course}/assignments/#{@assignment}"}>
-      <.button>Back to Assignment</.button>
-    </.link>
-    <.button type="submit" form="new-checklist_item-form">Save</.button>
-  </footer>
+  <.footer>
+    <:left>
+      <.link navigate={~p"/courses/#{@course}/assignments/#{@assignment}"}>
+        <.button>Back to Assignment</.button>
+      </.link>
+    </:left>
+    <:right>
+      <.button type="submit" form="new-checklist_item-form">Save</.button>
+    </:right>
+  </.footer>
 </div>

@@ -24,8 +24,30 @@ import {Socket} from "phoenix"
 import {LiveSocket} from "phoenix_live_view"
 import topbar from "../vendor/topbar"
 
+let Hooks = {}
+
+Hooks.GoBack = {
+  mounted() {
+    this.el.addEventListener("click", e => {
+      window.history.back()
+    })
+  }
+}
+
+Hooks.OptimisticRemove = {
+  mounted() {
+    this.el.addEventListener("click", e => {
+      let { removeId, event, ...payload } = this.el.dataset
+      let elToRemove = document.getElementById(removeId)
+      elToRemove.remove()
+      this.pushEvent(event, payload)
+    })
+  }
+}
+
+
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
-let liveSocket = new LiveSocket("/live", Socket, {params: {_csrf_token: csrfToken}})
+let liveSocket = new LiveSocket("/live", Socket, {params: {_csrf_token: csrfToken}, hooks: Hooks})
 
 // Show progress bar on live navigation and form submits
 topbar.config({barColors: {0: "#29d"}, shadowColor: "rgba(0, 0, 0, .3)"})
