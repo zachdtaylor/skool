@@ -12,7 +12,7 @@ defmodule Skool.Courses.ChecklistItem do
 
     belongs_to :assignment, Assignment
 
-    timestamps(updated_at: false)
+    timestamps(type: :utc_datetime, updated_at: false)
   end
 
   @doc false

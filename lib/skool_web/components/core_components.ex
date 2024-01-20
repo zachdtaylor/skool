@@ -488,7 +488,7 @@ defmodule SkoolWeb.CoreComponents do
           </div>
         <% end %>
       </div>
-      <div class="flex justify-end gap-2 self-end"><%= render_slot(@actions) %></div>
+      <div class="flex justify-end gap-2 self-end h-full"><%= render_slot(@actions) %></div>
     </header>
     """
   end
@@ -690,6 +690,21 @@ defmodule SkoolWeb.CoreComponents do
   def icon(%{name: "hero-" <> _} = assigns) do
     ~H"""
     <span class={[@name, @class]} />
+    """
+  end
+
+  slot :inner_block, required: true
+
+  def badge(assigns) do
+    ~H"""
+    <div class={[
+      "rounded-full border border-green-500 bg-green-200 px-3 py-1",
+      "grid grid-cols-[min-content_1fr] items-center gap-1",
+      "text-sm text-green-800"
+    ]}>
+      <.icon name="hero-check" class="w-4 h-4" />
+      <%= render_slot(@inner_block) %>
+    </div>
     """
   end
 

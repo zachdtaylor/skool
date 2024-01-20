@@ -31,6 +31,7 @@
             <.input type="date" field={@form[:end_date]} label="End Date" />
           </div>
         </div>
+        <.input type="number" field={@form[:frequency]} label="Frequency" />
       <% else %>
         <.input type="date" field={@form[:due_date]} label="Due Date" />
       <% end %>

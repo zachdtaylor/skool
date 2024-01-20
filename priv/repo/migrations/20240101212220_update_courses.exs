@@ -13,7 +13,7 @@ defmodule Skool.Repo.Migrations.UpdateCourses do
       add :course_id, references(:courses, on_delete: :delete_all)
       add :collaborator_id, references(:users, on_delete: :nothing)
 
-      timestamps(updated_at: false)
+      timestamps(type: :utc_datetime, updated_at: false)
     end
   end
 end

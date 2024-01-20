@@ -6,7 +6,7 @@ defmodule Skool.Courses do
   import Ecto.Query, warn: false
   alias Skool.Repo
 
-  alias Skool.Courses.{Assignment, ChecklistItem, Course, CourseCollaborator}
+  alias Skool.Courses.{Assignment, ChecklistItem, Course, CourseCollaborator, Enrollment}
 
   @doc """
   Returns the list of checklist items for an assignment.
@@ -51,8 +51,14 @@ defmodule Skool.Courses do
       [%Course{}, ...]
 
   """
-  def list_courses do
-    Repo.all(Course)
+  def list_courses(user) do
+    from(c in Course,
+      left_join: cc in CourseCollaborator,
+      on: c.id == cc.course_id,
+      where: cc.collaborator_id == ^user.id and is_nil(c.deleted_at),
+      or_where: c.created_by_id == ^user.id and is_nil(c.deleted_at)
+    )
+    |> Repo.all()
   end
 
   @doc """
@@ -271,5 +277,27 @@ defmodule Skool.Courses do
       where: cc.course_id == ^course_id and cc.collaborator_id == ^collaborator_id
     )
     |> Repo.delete_all()
+  end
+
+  @doc """
+  Enroll a user in a course.
+  """
+  def enroll_user(course_id, user_id) do
+    %Enrollment{}
+    |> Enrollment.changeset(%{course_id: course_id, user_id: user_id})
+    |> Repo.insert()
+  end
+
+  @doc """
+  Determines whether a user is enrolled in a course.
+  """
+  def is_enrolled?(course, user) do
+    enrollment =
+      from(e in Enrollment,
+        where: e.course_id == ^course.id and e.user_id == ^user.id
+      )
+      |> Repo.one()
+
+    !is_nil(enrollment)
   end
 end

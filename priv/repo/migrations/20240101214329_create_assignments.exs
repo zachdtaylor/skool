@@ -15,7 +15,7 @@ defmodule Skool.Repo.Migrations.CreateAssignments do
       add :start_date, :date
       add :end_date, :date
 
-      timestamps()
+      timestamps(type: :utc_datetime)
     end
 
     create table(:assignment_checklist_items) do
@@ -25,7 +25,7 @@ defmodule Skool.Repo.Migrations.CreateAssignments do
       add :grade_weight, :float
       add :due_date, :date
 
-      timestamps(updated_at: false)
+      timestamps(type: :utc_datetime, updated_at: false)
     end
 
     create table(:assignment_checklist_item_completions) do
@@ -37,7 +37,7 @@ defmodule Skool.Repo.Migrations.CreateAssignments do
       add :grade, :float
       add :completed_at, :utc_datetime
 
-      timestamps(updated_at: false)
+      timestamps(type: :utc_datetime, updated_at: false)
     end
 
     create table(:assignment_completions) do
@@ -47,7 +47,7 @@ defmodule Skool.Repo.Migrations.CreateAssignments do
       add :grade, :float
       add :completed_at, :utc_datetime
 
-      timestamps(updated_at: false)
+      timestamps(type: :utc_datetime, updated_at: false)
     end
   end
 end

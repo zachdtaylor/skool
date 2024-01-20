@@ -5,7 +5,7 @@ defmodule SkoolWeb.CourseLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, stream(socket, :courses, Courses.list_courses())}
+    {:ok, stream(socket, :courses, Courses.list_courses(socket.assigns.current_user))}
   end
 
   @impl true

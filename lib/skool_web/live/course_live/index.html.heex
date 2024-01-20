@@ -20,7 +20,9 @@
         <div class="sr-only">
           <.link navigate={~p"/courses/#{course}"}>Show</.link>
         </div>
-        <.link navigate={~p"/courses/#{course}/edit"}>Edit</.link>
+        <%= if is_nil(course.finalized_at) do %>
+          <.link navigate={~p"/courses/#{course}/edit"}>Edit</.link>
+        <% end %>
       </:action>
     </.table>
   </div>
