@@ -91,6 +91,11 @@ defmodule SkoolWeb.Router do
       live "/courses/:id", CourseLive.Show, :show
       live "/courses/:id/show/edit", CourseLive.Show, :edit
     end
+
+    live_session :assignments,
+      on_mount: [{SkoolWeb.UserAuth, :ensure_authenticated}] do
+      live "/assignments", AssignmentsLive.Index
+    end
   end
 
   scope "/", SkoolWeb do

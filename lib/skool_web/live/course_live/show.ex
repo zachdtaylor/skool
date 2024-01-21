@@ -49,7 +49,7 @@ defmodule SkoolWeb.CourseLive.Show do
       {:ok, _} ->
         {:noreply,
          socket
-         |> put_flash(:info, "You have been successfully enrolled in this course!")
+         |> put_flash(:info, "You have been enrolled in this course!")
          |> assign(:enrolled?, true)}
 
       {:error, _} ->
