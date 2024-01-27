@@ -22,6 +22,11 @@ config :skool, SkoolWeb.Endpoint,
   pubsub_server: Skool.PubSub,
   live_view: [signing_salt: "eC9RHTDN"]
 
+config :skool, Oban,
+  repo: Skool.Repo,
+  plugins: [Oban.Plugins.Pruner],
+  queues: [default: 10]
+
 # Configures the mailer
 #
 # By default it uses the "Local" adapter which stores the emails

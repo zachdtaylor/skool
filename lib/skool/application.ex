@@ -10,6 +10,7 @@ defmodule Skool.Application do
     children = [
       SkoolWeb.Telemetry,
       Skool.Repo,
+      {Oban, Application.fetch_env!(:skool, Oban)},
       {DNSCluster, query: Application.get_env(:skool, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Skool.PubSub},
       # Start the Finch HTTP client for sending emails

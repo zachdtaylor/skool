@@ -23,6 +23,8 @@ config :skool, SkoolWeb.Endpoint,
   secret_key_base: "QvOccw5K1dlJ2hjm1VW8z01IgPJJmKUDI/DsaFWrlOrgzbKrehlFJ4atJ0pcTPUa",
   server: false
 
+config :skool, Oban, testing: :inline
+
 # In test we don't send emails.
 config :skool, Skool.Mailer, adapter: Swoosh.Adapters.Test
 
