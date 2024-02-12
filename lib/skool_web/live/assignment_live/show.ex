@@ -2,7 +2,6 @@ defmodule SkoolWeb.AssignmentLive.Show do
   use SkoolWeb, :live_view
 
   alias Skool.Courses
-  # alias Skool.Courses.Assignment
 
   @impl true
   def mount(_params, _session, socket) do

@@ -19,7 +19,7 @@
         type="select"
         field={@form[:kind]}
         label="Kind"
-        options={Assignment.kinds()}
+        options={kinds()}
         prompt="Select Kind"
       />
       <%= if @form[:kind].value == :recurring do %>
@@ -31,7 +31,35 @@
             <.input type="date" field={@form[:end_date]} label="End Date" />
           </div>
         </div>
-        <.input type="number" field={@form[:frequency]} label="Frequency" />
+        <%= if @form[:start_date].value do %>
+          <div class="flex gap-2">
+            <.input type="number" field={@form[:repeats_every]} label="Repeats Every" />
+            <.input
+              type="select"
+              field={@form[:repeats_every_unit]}
+              label="Unit"
+              options={repeats_every_units()}
+            />
+          </div>
+          <%= case @form[:repeats_every_unit].value do %>
+            <% :week -> %>
+              <.input
+                type="select"
+                field={@form[:repeats_on]}
+                label="Repeats On"
+                options={repeats_ons(:week)}
+                multiple
+              />
+            <% :month -> %>
+              <.input
+                type="select"
+                field={@form[:repeats_on]}
+                label="Repeats On"
+                options={repeats_ons(:month, @form[:start_date].value)}
+              />
+            <% _ -> %>
+          <% end %>
+        <% end %>
       <% else %>
         <.input type="date" field={@form[:due_date]} label="Due Date" />
       <% end %>

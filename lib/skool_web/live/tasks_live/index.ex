@@ -1,4 +1,4 @@
-defmodule SkoolWeb.AssignmentsLive.Index do
+defmodule SkoolWeb.TasksLive.Index do
   use SkoolWeb, :live_view
 
   def mount(_params, _session, socket) do

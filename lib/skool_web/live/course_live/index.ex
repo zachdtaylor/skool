@@ -9,11 +9,6 @@ defmodule SkoolWeb.CourseLive.Index do
   end
 
   @impl true
-  def handle_info({SkoolWeb.CourseLive.FormComponent, {:saved, course}}, socket) do
-    {:noreply, stream_insert(socket, :courses, course)}
-  end
-
-  @impl true
   def handle_event("delete", %{"id" => id}, socket) do
     course = Courses.get_course!(id)
     {:ok, _} = Courses.delete_course(course)

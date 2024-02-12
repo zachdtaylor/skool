@@ -1,8 +1,16 @@
 defmodule SkoolWeb.AssignmentLive.Edit do
   use SkoolWeb, :live_view
 
+  import SkoolWeb.AssignmentLive.Helpers,
+    only: [
+      transform_repeats_on: 1,
+      kinds: 0,
+      repeats_every_units: 0,
+      repeats_ons: 1,
+      repeats_ons: 2
+    ]
+
   alias Skool.Courses
-  alias Skool.Courses.Assignment
 
   def mount(%{"course_id" => course_id, "assignment_id" => assignment_id}, _session, socket) do
     course = Courses.get_course!(course_id)
@@ -20,7 +28,7 @@ defmodule SkoolWeb.AssignmentLive.Edit do
   def handle_event("save", %{"assignment" => assignment_params}, socket) do
     assignment = Courses.get_assignment!(assignment_params["id"])
 
-    case Courses.update_assignment(assignment, assignment_params) do
+    case Courses.update_assignment(assignment, transform_repeats_on(assignment_params)) do
       {:ok, assignment} ->
         {:noreply,
          push_navigate(socket,

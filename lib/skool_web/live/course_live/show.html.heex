@@ -53,8 +53,8 @@
       <:col :let={{_id, assignment}} label="Due Date">
         <%= format_date(assignment.due_date) %>
       </:col>
-      <:col :let={{_id, assignment}} label="Interval">
-        <%= format_interval(assignment) %>
+      <:col :let={{_id, assignment}} label="Repeats">
+        <%= display_repeats(assignment) %>
       </:col>
       <:col :let={{_id, assignment}} label="Weight"><%= assignment.grade_weight %>%</:col>
       <:action :let={{_id, assignment}}>

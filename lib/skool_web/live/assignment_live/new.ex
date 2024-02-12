@@ -1,6 +1,15 @@
 defmodule SkoolWeb.AssignmentLive.New do
   use SkoolWeb, :live_view
 
+  import SkoolWeb.AssignmentLive.Helpers,
+    only: [
+      transform_repeats_on: 1,
+      kinds: 0,
+      repeats_every_units: 0,
+      repeats_ons: 1,
+      repeats_ons: 2
+    ]
+
   alias Skool.Courses
   alias Skool.Courses.Assignment
 
@@ -23,12 +32,16 @@ defmodule SkoolWeb.AssignmentLive.New do
 
   @impl true
   def handle_event("validate", %{"assignment" => assignment_params}, socket) do
-    changeset = Courses.change_assignment(%Assignment{}, assignment_params)
+    changeset = Courses.change_assignment(%Assignment{}, transform_repeats_on(assignment_params))
     {:noreply, assign_form(socket, changeset)}
   end
 
   def handle_event("create", %{"assignment" => assignment_params}, socket) do
-    result = Courses.create_assignment(assignment_params)
+    result =
+      assignment_params
+      |> transform_repeats_on()
+      |> IO.inspect(label: "params")
+      |> Courses.create_assignment()
 
     case result do
       {:ok, assignment} ->

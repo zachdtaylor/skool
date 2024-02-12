@@ -6,6 +6,8 @@ defmodule Skool.Tasks do
   import Ecto.Query, warn: false
   alias Skool.Repo
 
+  alias Skool.Accounts.User
+  alias Skool.Courses.{Assignment, Course, Enrollment}
   alias Skool.Tasks.Task
 
   @doc """
@@ -17,25 +19,10 @@ defmodule Skool.Tasks do
       [%Task{}, ...]
 
   """
-  def list_tasks do
-    Repo.all(Task)
+  def list_tasks(%User{} = user) do
+    user
+    |> assignments_from_enrolled_courses()
   end
-
-  @doc """
-  Gets a single task.
-
-  Raises `Ecto.NoResultsError` if the Task does not exist.
-
-  ## Examples
-
-      iex> get_task!(123)
-      %Task{}
-
-      iex> get_task!(456)
-      ** (Ecto.NoResultsError)
-
-  """
-  def get_task!(id), do: Repo.get!(Task, id)
 
   @doc """
   Creates a task.
@@ -55,50 +42,60 @@ defmodule Skool.Tasks do
     |> Repo.insert()
   end
 
-  @doc """
-  Updates a task.
+  defp assignments_from_enrolled_courses(%User{} = user) do
+    query =
+      from a in Assignment,
+        join: e in Enrollment,
+        on: e.course_id == a.course_id,
+        where: e.user_id == ^user.id
 
-  ## Examples
-
-      iex> update_task(task, %{field: new_value})
-      {:ok, %Task{}}
-
-      iex> update_task(task, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def update_task(%Task{} = task, attrs) do
-    task
-    |> Task.changeset(attrs)
-    |> Repo.update()
+    Repo.all(query)
   end
 
-  @doc """
-  Deletes a task.
-
-  ## Examples
-
-      iex> delete_task(task)
-      {:ok, %Task{}}
-
-      iex> delete_task(task)
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def delete_task(%Task{} = task) do
-    Repo.delete(task)
+  def create_tasks_for_course(%User{} = user, %Course{} = course) do
+    create_tasks_for_checklist_assignments(user, course)
+    create_tasks_for_task_assignments(user, course)
   end
 
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking task changes.
+  defp create_tasks_for_checklist_assignments(%User{} = user, %Course{} = course) do
+    query = from(a in Assignment, where: a.course_id == ^course.id, where: a.kind == "checklist")
 
-  ## Examples
-
-      iex> change_task(task)
-      %Ecto.Changeset{data: %Task{}}
-
-  """
-  def change_task(%Task{} = task, attrs \\ %{}) do
-    Task.changeset(task, attrs)
+    query
+    |> Repo.all()
+    |> Enum.map(fn %Assignment{} = assignment ->
+      create_task(%{
+        assignment_id: assignment.id,
+        user_id: user.id,
+        due_date: assignment.due_date
+      })
+    end)
   end
+
+  defp create_tasks_for_task_assignments(%User{} = user, %Course{} = course) do
+    query = from(a in Assignment, where: a.course_id == ^course.id, where: a.kind == "task")
+
+    query
+    |> Repo.all()
+    |> Enum.map(fn %Assignment{} = assignment ->
+      create_task(%{
+        assignment_id: assignment.id,
+        user_id: user.id,
+        due_date: assignment.due_date
+      })
+    end)
+  end
+
+  # defp create_tasks_for_recurring_assignments(%User{} = user, %Course{} = course) do
+  #   query = from(a in Assignment, where: a.course_id == ^course.id, where: a.kind == "recurring")
+
+  #   assignments = Repo.all(query)
+
+  #   for date <- Date.range(course.start_date, course.end_date) do
+  #     for assignment <- assignments do
+  #     end
+  #   end
+  # end
+
+  # defp requires_task_for_date?(%Assignment{kind: "recurring"} = assignment, date) do
+  # end
 end

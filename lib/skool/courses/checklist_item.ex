@@ -4,7 +4,7 @@ defmodule Skool.Courses.ChecklistItem do
 
   alias Skool.Courses.Assignment
 
-  schema "assignment_checklist_items" do
+  schema "checklist_items" do
     field :title, :string
     field :description, :string
     field :grade_weight, :float

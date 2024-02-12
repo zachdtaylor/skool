@@ -32,11 +32,8 @@
       <:item title="Grade Weight">
         <%= @assignment.grade_weight * 100 %>%
       </:item>
-      <:item title="Recurrance Interval" if={@assignment.kind == :recurring}>
-        <%= @assignment.recurrance_interval %>
-      </:item>
-      <:item title="Recurrance Unit" if={@assignment.kind == :recurring}>
-        <%= @assignment.recurrance_unit |> String.capitalize() %>
+      <:item title="Repeats" if={@assignment.kind == :recurring}>
+        <%= display_repeats(@assignment) %>
       </:item>
     </.list>
     <%= if @assignment.kind == :checklist do %>
