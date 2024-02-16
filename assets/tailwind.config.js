@@ -19,7 +19,9 @@ module.exports = {
         "brand-50": "rgba(119, 82, 254, 0.5)",
         "brand-4": "rgba(119, 82, 254, 0.04)",
         "brand-2": "rgba(119, 82, 254, 0.02)",
-        "compliment-10": "rgba(194, 217, 255, 0.1)"
+        "compliment": "rgba(194, 217, 255, 100)",
+        "compliment-10": "rgba(194, 217, 255, 0.1)",
+        secondary: "rgba(25, 4, 130, 100)"
       }
     },
   },

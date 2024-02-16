@@ -78,6 +78,13 @@ defmodule Skool.Courses do
   def get_course!(id), do: Repo.get!(Course, id)
 
   @doc """
+  Gets the user who created the given course.
+  """
+  def get_course_creator(course) do
+    Repo.preload(course, :created_by).created_by
+  end
+
+  @doc """
   Gets a single assignment.
 
   Raises `Ecto.NoResultsError` if the Assignment does not exist.

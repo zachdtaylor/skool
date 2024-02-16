@@ -9,11 +9,12 @@ defmodule Skool.Courses.Course do
     field :name, :string
     field :description, :string
     field :category, :string
-    field :created_by_id, :id
     field :start_date, :date
     field :end_date, :date
     field :deleted_at, :utc_datetime
     field :finalized_at, :utc_datetime
+
+    belongs_to :created_by, User
 
     many_to_many :collaborators, User,
       join_through: CourseCollaborator,

@@ -11,6 +11,7 @@ defmodule SkoolWeb.CourseLive.Collaborators do
     {:ok,
      socket
      |> assign_course_name(course)
+     |> assign_created_by_name(course)
      |> assign_search_results(nil)
      |> assign_collaborators(course)}
   end
@@ -51,6 +52,11 @@ defmodule SkoolWeb.CourseLive.Collaborators do
 
   defp assign_course_name(socket, course) do
     assign(socket, course_name: course.name)
+  end
+
+  defp assign_created_by_name(socket, course) do
+    created_by = Courses.get_course_creator(course)
+    assign(socket, created_by_name: created_by.full_name)
   end
 
   defp assign_search_results(socket, query) when is_nil(query) or query == "" do
