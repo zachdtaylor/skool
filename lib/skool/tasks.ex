@@ -4,10 +4,11 @@ defmodule Skool.Tasks do
   """
 
   import Ecto.Query, warn: false
-  alias Skool.Repo
 
+  alias Ecto.Multi
+  alias Skool.Repo
   alias Skool.Accounts.User
-  alias Skool.Courses.{Assignment, Course, Enrollment}
+  alias Skool.Courses.{Assignment, ChecklistItem, Course, Enrollment}
   alias Skool.Tasks.Task
 
   @doc """
@@ -20,29 +21,6 @@ defmodule Skool.Tasks do
 
   """
   def list_tasks(%User{} = user) do
-    user
-    |> assignments_from_enrolled_courses()
-  end
-
-  @doc """
-  Creates a task.
-
-  ## Examples
-
-      iex> create_task(%{field: value})
-      {:ok, %Task{}}
-
-      iex> create_task(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def create_task(attrs \\ %{}) do
-    %Task{}
-    |> Task.changeset(attrs)
-    |> Repo.insert()
-  end
-
-  defp assignments_from_enrolled_courses(%User{} = user) do
     query =
       from a in Assignment,
         join: e in Enrollment,
@@ -52,50 +30,212 @@ defmodule Skool.Tasks do
     Repo.all(query)
   end
 
-  def create_tasks_for_course(%User{} = user, %Course{} = course) do
-    create_tasks_for_checklist_assignments(user, course)
-    create_tasks_for_task_assignments(user, course)
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking task changes.
+
+  ## Examples
+
+      iex> change_task(%{field: value})
+      %Ecto.Changeset{data: %Task{}}
+
+  """
+  def change_task(%Task{} = task, attrs \\ %{}), do: Task.changeset(task, attrs)
+
+  @doc """
+  Creates all course tasks for the given user.
+
+  ## Examples
+
+      iex> create_tasks(%Course{}, %User{})
+      {:ok, %{checklist: {1, nil}, checklist_item: {6, nil}, task: {1, nil}, recurring: {332, nil}}}
+
+  """
+  def create_tasks(%Course{} = course, %User{} = user) do
+    inserted_at = DateTime.utc_now(:second)
+
+    Multi.new()
+    |> Multi.insert_all(:checklist, Task, build_tasks(:checklist, user, course, inserted_at))
+    |> Multi.insert_all(
+      :checklist_item,
+      Task,
+      build_tasks(:checklist_item, user, course, inserted_at)
+    )
+    |> Multi.insert_all(:task, Task, build_tasks(:task, user, course, inserted_at))
+    |> Multi.insert_all(:recurring, Task, build_tasks(:recurring, user, course, inserted_at))
+    |> Repo.transaction()
   end
 
-  defp create_tasks_for_checklist_assignments(%User{} = user, %Course{} = course) do
-    query = from(a in Assignment, where: a.course_id == ^course.id, where: a.kind == "checklist")
+  defp build_tasks(:checklist, %User{} = user, %Course{} = course, inserted_at) do
+    query = from(a in Assignment, where: a.course_id == ^course.id, where: a.kind == ^"checklist")
 
     query
     |> Repo.all()
     |> Enum.map(fn %Assignment{} = assignment ->
-      create_task(%{
+      %{
         assignment_id: assignment.id,
         user_id: user.id,
-        due_date: assignment.due_date
-      })
+        due_date: assignment.due_date,
+        inserted_at: inserted_at
+      }
     end)
   end
 
-  defp create_tasks_for_task_assignments(%User{} = user, %Course{} = course) do
-    query = from(a in Assignment, where: a.course_id == ^course.id, where: a.kind == "task")
+  defp build_tasks(:checklist_item, %User{} = user, %Course{} = course, inserted_at) do
+    from(c in ChecklistItem,
+      join: a in Assignment,
+      on: c.assignment_id == a.id,
+      where: a.course_id == ^course.id
+    )
+    |> Repo.all()
+    |> Enum.map(fn %ChecklistItem{} = checklist_item ->
+      %{
+        assignment_id: checklist_item.assignment_id,
+        checklist_item_id: checklist_item.id,
+        user_id: user.id,
+        due_date: checklist_item.due_date,
+        inserted_at: inserted_at
+      }
+    end)
+  end
 
-    query
+  defp build_tasks(:task, %User{} = user, %Course{} = course, inserted_at) do
+    from(a in Assignment, where: a.course_id == ^course.id, where: a.kind == ^"task")
     |> Repo.all()
     |> Enum.map(fn %Assignment{} = assignment ->
-      create_task(%{
+      %{
         assignment_id: assignment.id,
         user_id: user.id,
-        due_date: assignment.due_date
-      })
+        due_date: assignment.due_date,
+        inserted_at: inserted_at
+      }
     end)
   end
 
-  # defp create_tasks_for_recurring_assignments(%User{} = user, %Course{} = course) do
-  #   query = from(a in Assignment, where: a.course_id == ^course.id, where: a.kind == "recurring")
+  defp build_tasks(:recurring, %User{} = user, %Course{} = course, inserted_at) do
+    query = from(a in Assignment, where: a.course_id == ^course.id, where: a.kind == ^"recurring")
 
-  #   assignments = Repo.all(query)
+    assignments = Repo.all(query)
 
-  #   for date <- Date.range(course.start_date, course.end_date) do
-  #     for assignment <- assignments do
-  #     end
-  #   end
-  # end
+    course.start_date
+    |> Date.range(course.end_date)
+    |> Enum.reduce([], fn date, acc ->
+      acc ++ build_tasks_for_date(date, assignments, user, inserted_at)
+    end)
+  end
 
-  # defp requires_task_for_date?(%Assignment{kind: "recurring"} = assignment, date) do
-  # end
+  defp build_tasks_for_date(date, assignments, user, inserted_at) do
+    Enum.reduce(assignments, [], fn assignment, acc ->
+      if in_assignment_date_range?(date, assignment) and
+           requires_task_for_date?(assignment, date) do
+        task_attrs = %{
+          assignment_id: assignment.id,
+          user_id: user.id,
+          due_date: date,
+          inserted_at: inserted_at
+        }
+
+        [task_attrs | acc]
+      else
+        acc
+      end
+    end)
+  end
+
+  defp requires_task_for_date?(%Assignment{repeats_every_unit: :day} = assignment, date) do
+    date
+    |> Date.diff(assignment.start_date)
+    |> rem(assignment.repeats_every) == 0
+  end
+
+  defp requires_task_for_date?(%Assignment{repeats_every_unit: :week} = assignment, date) do
+    repeats_on_week? =
+      date
+      |> Date.diff(assignment.start_date)
+      |> rem(assignment.repeats_every * 7) <= 7
+
+    if repeats_on_week? do
+      repeats_on_day_of_week?(date, assignment)
+    else
+      false
+    end
+  end
+
+  defp requires_task_for_date?(%Assignment{repeats_every_unit: :month} = assignment, date) do
+    if Date.compare(date, assignment.start_date) == :eq do
+      true
+    else
+      repeats_on_month? =
+        (date.month - assignment.start_date.month)
+        |> rem(assignment.repeats_every) == 0
+
+      if repeats_on_month? do
+        repeats_on_day_of_month?(date, assignment)
+      else
+        false
+      end
+    end
+  end
+
+  defp requires_task_for_date?(%Assignment{repeats_every_unit: :year} = assignment, date) do
+    if Date.compare(date, assignment.start_date) == :eq do
+      true
+    else
+      repeats_on_year? =
+        (date.year - assignment.start_date.year)
+        |> rem(assignment.repeats_every) == 0
+
+      if repeats_on_year? do
+        date.day == assignment.start_date.day and
+          date.month == assignment.start_date.month
+      else
+        false
+      end
+    end
+  end
+
+  defp repeats_on_day_of_month?(date, %Assignment{repeats_on: "day"} = assignment),
+    do: date.day == assignment.start_date.day
+
+  defp repeats_on_day_of_month?(date, %Assignment{repeats_on: "first"} = assignment) do
+    date.day <= 7 and Date.day_of_week(date) == Date.day_of_week(assignment.start_date)
+  end
+
+  defp repeats_on_day_of_month?(date, %Assignment{repeats_on: "second"} = assignment) do
+    date.day > 7 and date.day <= 14 and
+      Date.day_of_week(date) == Date.day_of_week(assignment.start_date)
+  end
+
+  defp repeats_on_day_of_month?(date, %Assignment{repeats_on: "third"} = assignment) do
+    date.day > 14 and date.day <= 21 and
+      Date.day_of_week(date) == Date.day_of_week(assignment.start_date)
+  end
+
+  defp repeats_on_day_of_month?(date, %Assignment{repeats_on: "fourth"} = assignment) do
+    date.day > 21 and date.day <= 28 and
+      Date.day_of_week(date) == Date.day_of_week(assignment.start_date)
+  end
+
+  defp repeats_on_day_of_month?(date, %Assignment{repeats_on: "last"} = assignment) do
+    date.day + 7 > Date.days_in_month(date) and
+      Date.day_of_week(date) == Date.day_of_week(assignment.start_date)
+  end
+
+  defp repeats_on_day_of_week?(date, %Assignment{} = assignment),
+    do: String.contains?(assignment.repeats_on, day_of_week(date))
+
+  defp day_of_week(date) do
+    case Date.day_of_week(date) do
+      1 -> "monday"
+      2 -> "tuesday"
+      3 -> "wednesday"
+      4 -> "thursday"
+      5 -> "friday"
+      6 -> "saturday"
+      7 -> "sunday"
+    end
+  end
+
+  defp in_assignment_date_range?(date, %Assignment{} = assignment) do
+    Date.diff(date, assignment.start_date) >= 0 and Date.diff(date, assignment.end_date) <= 0
+  end
 end
