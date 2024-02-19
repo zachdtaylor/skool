@@ -6,6 +6,7 @@ defmodule Skool.Tasks do
   import Ecto.Query, warn: false
 
   alias Ecto.Multi
+  alias Skool.DateHelpers
   alias Skool.Repo
   alias Skool.Accounts.User
   alias Skool.Courses.{Assignment, ChecklistItem, Course, Enrollment}
@@ -28,6 +29,31 @@ defmodule Skool.Tasks do
         where: e.user_id == ^user.id
 
     Repo.all(query)
+  end
+
+  @doc """
+  Returns the list of today's tasks based on the user's timezone.
+  """
+  def list_todays_tasks(%User{} = user) do
+    today = DateHelpers.today(user)
+
+    query =
+      from t in Task,
+        where: t.user_id == ^user.id,
+        where: t.due_date == ^today
+
+    query
+    |> Repo.all()
+    |> Repo.preload(:assignment)
+    |> Repo.preload(:checklist_item)
+  end
+
+  def complete_task(id) do
+    task = Repo.get!(Task, id)
+
+    task
+    |> change_task(%{completed_at: DateTime.utc_now()})
+    |> Repo.update()
   end
 
   @doc """

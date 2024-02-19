@@ -1,22 +1,15 @@
 <div class="h-full flex flex-col relative">
   <.header>
-    Tasks
+    Today's Tasks
   </.header>
   <div class="p-4">
-    <.table
-      id="courses"
-      rows={@streams.courses}
-      row_click={fn {_id, course} -> JS.navigate(~p"/courses/#{course}") end}
-    >
-      <:col :let={{_id, course}} label="Name"><%= course.name %></:col>
-      <:col :let={{_id, course}} label="Start Date"><%= format_date(course.start_date) %></:col>
-      <:col :let={{_id, course}} label="End Date"><%= format_date(course.end_date) %></:col>
-      <:action :let={{_id, course}}>
-        <div class="sr-only">
-          <.link navigate={~p"/courses/#{course}"}>Show</.link>
-        </div>
-        <%= if is_nil(course.finalized_at) do %>
-          <.link navigate={~p"/courses/#{course}/edit"}>Edit</.link>
+    <.table id="todays_tasks" rows={@streams.todays_tasks}>
+      <:col :let={{_id, task}} label="Name"><%= task.assignment.title %></:col>
+      <:action :let={{_id, task}}>
+        <%= if is_nil(task.completed_at) do %>
+          <button phx-click="complete" phx-value-task_id={task.id}>Complete Task</button>
+        <% else %>
+          <.icon name="hero-check-circle" class="text-secondary" />
         <% end %>
       </:action>
     </.table>
