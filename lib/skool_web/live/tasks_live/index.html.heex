@@ -1,10 +1,28 @@
 <div class="h-full flex flex-col relative">
   <.header>
-    Today's Tasks
+    Tasks
   </.header>
   <div class="p-4">
+    <h1>Due Today (<%= format_date(@todays_date) %>)</h1>
     <.table id="todays_tasks" rows={@streams.todays_tasks}>
-      <:col :let={{_id, task}} label="Name"><%= task.assignment.title %></:col>
+      <:col :let={{_id, task}} label="Name"><.task_name task={task} /></:col>
+      <:col :let={{_id, task}} label="Course"><%= task.assignment.course.name %></:col>
+      <:action :let={{_id, task}}>
+        <%= if is_nil(task.completed_at) do %>
+          <button phx-click="complete" phx-value-task_id={task.id}>Complete Task</button>
+        <% else %>
+          <.icon name="hero-check-circle" class="text-secondary" />
+        <% end %>
+      </:action>
+    </.table>
+  </div>
+
+  <div class="p-4">
+    <h1>Due this week</h1>
+    <.table id="todays_tasks" rows={@streams.week_tasks}>
+      <:col :let={{_id, task}} label="Name"><.task_name task={task} /></:col>
+      <:col :let={{_id, task}} label="Due Date"><%= format_date(task.due_date) %></:col>
+      <:col :let={{_id, task}} label="Course"><%= task.assignment.course.name %></:col>
       <:action :let={{_id, task}}>
         <%= if is_nil(task.completed_at) do %>
           <button phx-click="complete" phx-value-task_id={task.id}>Complete Task</button>

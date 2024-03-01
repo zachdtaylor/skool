@@ -32,20 +32,50 @@ defmodule Skool.Tasks do
   end
 
   @doc """
-  Returns the list of today's tasks based on the user's timezone.
+  Returns the list of tasks for the provided user and date.
+
+  If a date is not provided, defaults to today's date, based on the user's timezone.
   """
-  def list_todays_tasks(%User{} = user) do
-    today = DateHelpers.today(user)
+  def list_tasks_for_date(user, date \\ nil)
+
+  def list_tasks_for_date(%User{} = user, nil),
+    do: list_tasks_for_date(user, DateHelpers.today(user))
+
+  def list_tasks_for_date(%User{} = user, %Date{} = date) do
+    query =
+      from t in Task,
+        where: t.user_id == ^user.id,
+        where: t.due_date == ^date
+
+    query
+    |> Repo.all()
+    |> Repo.preload(assignment: [:course], checklist_item: [])
+  end
+
+  @doc """
+  Returns the list of tasks for the provided user, due on the week of the given date.
+
+  If a date is not provided, defaults to today's date, based on the user's timezone.
+  """
+  def list_tasks_for_week(user, date \\ nil)
+
+  def list_tasks_for_week(%User{} = user, nil),
+    do: list_tasks_for_week(user, DateHelpers.today(user))
+
+  def list_tasks_for_week(%User{} = user, %Date{} = date) do
+    day_of_week = Date.day_of_week(date, :sunday)
+    start_date = Date.add(date, -day_of_week + 1)
+    end_date = Date.add(start_date, 6)
 
     query =
       from t in Task,
         where: t.user_id == ^user.id,
-        where: t.due_date == ^today
+        where: t.due_date >= ^start_date,
+        where: t.due_date <= ^end_date
 
     query
     |> Repo.all()
-    |> Repo.preload(:assignment)
-    |> Repo.preload(:checklist_item)
+    |> Repo.preload(assignment: [:course], checklist_item: [])
   end
 
   def complete_task(id) do
