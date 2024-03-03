@@ -14,13 +14,15 @@
             navigate={~p"/courses"}
           />
           <.app_nav_link icon="hero-check" text="Tasks" navigate={~p"/tasks"} />
+          <.app_nav_link icon="hero-academic-cap" text="Grades" navigate={~p"/grades"} />
         </ul>
       <% end %>
     </div>
     <ul class="flex flex-col gap-1 px-2 pt-4 pb-8 border-t border-t-slate-200">
       <%= if @current_user do %>
         <li class="text-[0.8125rem] leading-6 text-zinc-900 bg-white p-4">
-          <%= @current_user.email %>
+          <%= @current_user.full_name %>
+          <span class="text-xs text-gray-500"><%= @current_user.email %></span>
         </li>
         <.app_nav_link icon="hero-cog-6-tooth" text="Settings" href={~p"/users/settings"} />
         <.app_nav_link

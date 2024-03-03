@@ -25,6 +25,8 @@ defmodule Skool.Courses.Assignment do
     timestamps(type: :utc_datetime)
   end
 
+  def kinds, do: @kinds
+
   @doc false
   def changeset(assignment, attrs) do
     assignment

@@ -96,6 +96,11 @@ defmodule SkoolWeb.Router do
       on_mount: [{SkoolWeb.UserAuth, :ensure_authenticated}] do
       live "/tasks", TasksLive.Index
     end
+
+    live_session :grades,
+      on_mount: [{SkoolWeb.UserAuth, :ensure_authenticated}] do
+      live "/grades", GradesLive.Index
+    end
   end
 
   scope "/", SkoolWeb do
