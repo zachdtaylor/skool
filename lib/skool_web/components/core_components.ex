@@ -465,13 +465,14 @@ defmodule SkoolWeb.CoreComponents do
   Renders a header with title.
   """
   attr :class, :string, default: nil
+  attr :type, :string, default: "page"
 
   slot :inner_block, required: true
   slot :subtitle
   slot :actions
   slot :tabs
 
-  def header(assigns) do
+  def header(%{type: "page"} = assigns) do
     ~H"""
     <header class={[
       "border-b border-b-slate-100 p-4 sticky bg-white",
@@ -492,6 +493,20 @@ defmodule SkoolWeb.CoreComponents do
         <% end %>
       </div>
       <div class="flex justify-end gap-2 self-end h-full"><%= render_slot(@actions) %></div>
+    </header>
+    """
+  end
+
+  def header(%{type: "section"} = assigns) do
+    ~H"""
+    <header class={[
+      "border-b border-b-slate-100 p-4 sticky bg-white items-center",
+      @class
+    ]}>
+      <h1 class="text-md font-bold"><%= render_slot(@inner_block) %></h1>
+      <p :if={@subtitle != []} class="text-xs">
+        <%= render_slot(@subtitle) %>
+      </p>
     </header>
     """
   end

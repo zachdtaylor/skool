@@ -5,8 +5,8 @@ defmodule SkoolWeb.UserConfirmationLive do
 
   def render(%{live_action: :edit} = assigns) do
     ~H"""
-    <div class="mx-auto max-w-sm">
-      <.header class="text-center">Confirm Account</.header>
+    <div class="mx-auto max-w-sm mt-24">
+      <.header type="section" class="text-center">Confirm Account</.header>
 
       <.simple_form for={@form} id="confirmation_form" phx-submit="confirm_account">
         <.input field={@form[:token]} type="hidden" />

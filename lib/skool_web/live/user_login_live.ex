@@ -4,7 +4,7 @@ defmodule SkoolWeb.UserLoginLive do
   def render(assigns) do
     ~H"""
     <div class="mx-auto max-w-sm mt-24">
-      <.header class="text-center">
+      <.header type="section" class="text-center">
         Sign in to account
         <:subtitle>
           Don't have an account?

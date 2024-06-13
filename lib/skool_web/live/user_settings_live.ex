@@ -5,7 +5,7 @@ defmodule SkoolWeb.UserSettingsLive do
 
   def render(assigns) do
     ~H"""
-    <.header>
+    <.header type="section">
       Account Settings
       <:subtitle>Manage your account email address and password settings</:subtitle>
     </.header>
