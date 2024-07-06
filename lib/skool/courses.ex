@@ -290,9 +290,12 @@ defmodule Skool.Courses do
   Enroll a user in a course.
   """
   def enroll_user(course_id, user_id) do
-    %Enrollment{}
-    |> Enrollment.changeset(%{course_id: course_id, user_id: user_id})
-    |> Repo.insert()
+    enrollment = Enrollment.changeset(%Enrollment{}, %{course_id: course_id, user_id: user_id})
+
+    Ecto.Multi.new()
+    |> Ecto.Multi.insert(:enrollment, enrollment)
+    |> Oban.insert(:create_tasks_job, Skool.Workers.new_create_tasks(course_id, user_id))
+    |> Repo.transaction()
   end
 
   @doc """
