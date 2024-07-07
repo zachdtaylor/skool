@@ -17,8 +17,8 @@ defmodule SkoolWeb.CourseLive.Edit do
     course = Courses.get_course!(course_params["id"])
 
     case Courses.update_course(course, course_params) do
-      {:ok, course} ->
-        {:noreply, push_navigate(socket, to: ~p"/courses/#{course.id}")}
+      {:ok, _course} ->
+        {:noreply, push_navigate(socket, to: ~p"/courses")}
 
       {:error, changeset} ->
         {:noreply, assign_form(socket, changeset)}

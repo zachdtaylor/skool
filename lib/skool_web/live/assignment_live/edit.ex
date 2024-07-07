@@ -32,7 +32,7 @@ defmodule SkoolWeb.AssignmentLive.Edit do
       {:ok, assignment} ->
         {:noreply,
          push_navigate(socket,
-           to: ~p"/courses/#{assignment.course_id}/assignments/#{assignment.id}"
+           to: ~p"/courses/#{assignment.course_id}"
          )}
 
       {:error, changeset} ->
