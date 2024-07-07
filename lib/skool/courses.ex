@@ -52,12 +52,29 @@ defmodule Skool.Courses do
 
   """
   def list_courses(user) do
-    from(c in Course,
-      left_join: cc in CourseCollaborator,
-      on: c.id == cc.course_id,
-      where: cc.collaborator_id == ^user.id and is_nil(c.deleted_at),
-      or_where: c.created_by_id == ^user.id and is_nil(c.deleted_at)
-    )
+    Course
+    |> from()
+    |> join(:left, [c], cc in CourseCollaborator, on: cc.course_id == c.id)
+    |> join(:left, [c], e in Enrollment, on: e.course_id == c.id and e.user_id == ^user.id)
+    |> where([c, cc], cc.collaborator_id == ^user.id and is_nil(c.deleted_at))
+    |> or_where([c, cc], c.created_by_id == ^user.id and is_nil(c.deleted_at))
+    |> select([course, _course_collaborator, enrollment], %Course{
+      id: course.id,
+      name: course.name,
+      start_date: course.start_date,
+      end_date: course.end_date,
+      status:
+        fragment(
+          "CASE
+            WHEN ? IS NOT NULL THEN 'enrolled'
+            WHEN ? IS NOT NULL THEN 'finalized'
+            ELSE 'in_progress'
+          END",
+          enrollment.id,
+          course.finalized_at
+        ),
+      finalized_at: course.finalized_at
+    })
     |> Repo.all()
   end
 

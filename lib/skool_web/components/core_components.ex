@@ -711,9 +711,13 @@ defmodule SkoolWeb.CoreComponents do
     """
   end
 
-  slot :inner_block, required: true
+  @doc """
+  Renders a badge.
+  """
+  attr :type, :string, required: true
+  slot :inner_block
 
-  def badge(assigns) do
+  def badge(%{type: "success"} = assigns) do
     ~H"""
     <div class={[
       "rounded-full border border-green-500 bg-green-200 px-3 py-1",
@@ -721,6 +725,28 @@ defmodule SkoolWeb.CoreComponents do
       "text-sm text-green-800"
     ]}>
       <.icon name="hero-check" class="w-4 h-4" />
+      <%= render_slot(@inner_block) %>
+    </div>
+    """
+  end
+
+  def badge(%{type: "caution"} = assigns) do
+    ~H"""
+    <div class={[
+      "rounded-full border border-yellow-500 bg-yellow-200 px-3 py-1 items-center gap-1",
+      "text-sm text-yellow-800"
+    ]}>
+      <%= render_slot(@inner_block) %>
+    </div>
+    """
+  end
+
+  def badge(%{type: "info"} = assigns) do
+    ~H"""
+    <div class={[
+      "rounded-full border border-slate-500 bg-slate-200 px-3 py-1 items-center gap-1",
+      "text-sm text-slate-800"
+    ]}>
       <%= render_slot(@inner_block) %>
     </div>
     """

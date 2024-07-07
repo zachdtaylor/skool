@@ -20,6 +20,8 @@ defmodule Skool.Courses.Course do
       join_through: CourseCollaborator,
       join_keys: [course_id: :id, collaborator_id: :id]
 
+    field :status, :string, virtual: true
+
     timestamps(type: :utc_datetime)
   end
 
