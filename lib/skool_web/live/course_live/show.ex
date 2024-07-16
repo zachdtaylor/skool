@@ -10,15 +10,14 @@ defmodule SkoolWeb.CourseLive.Show do
 
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
-    course = Courses.get_course!(id)
-    assignments = Courses.load_assignments(course)
+    course = id |> Courses.get_course!() |> Courses.preload_assignments()
 
     {:noreply,
      socket
      |> assign(:page_title, course.name)
      |> assign(:course, course)
      |> assign(:enrolled?, Courses.is_enrolled?(course, socket.assigns.current_user))
-     |> stream(:assignments, assignments)}
+     |> stream(:assignments, course.assignments)}
   end
 
   @impl true
@@ -55,5 +54,10 @@ defmodule SkoolWeb.CourseLive.Show do
       {:error, _} ->
         {:noreply, put_flash(socket, :error, "Failed to enroll in this course")}
     end
+  end
+
+  def handle_event("split_weights", _params, socket) do
+    course = Courses.split_weights!(socket.assigns.course)
+    {:noreply, stream(socket, :assignments, course.assignments)}
   end
 end

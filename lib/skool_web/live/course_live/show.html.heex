@@ -14,8 +14,13 @@
                 <.dropdown_option icon="hero-pencil-square" text="Edit course" />
               </.link>
               <.link navigate={~p"/courses/#{@course}/collaborators"}>
-                <.dropdown_option icon="hero-clipboard" text="Manage Collaborators" />
+                <.dropdown_option icon="hero-clipboard" text="Manage collaborators" />
               </.link>
+              <form phx-submit="split_weights">
+                <button phx-click={JS.toggle(to: "#course-menu-content")}>
+                  <.dropdown_option icon="hero-arrows-right-left" text="Split assignment weights" />
+                </button>
+              </form>
             </:options>
           </.dropdown>
         <% not @enrolled? -> %>
@@ -62,7 +67,9 @@
       <:col :let={{_id, assignment}} label="Repeats">
         <%= display_repeats(assignment) %>
       </:col>
-      <:col :let={{_id, assignment}} label="Weight"><%= assignment.grade_weight * 100 %>%</:col>
+      <:col :let={{_id, assignment}} label="Weight">
+        <%= format_percent(assignment.grade_weight) %>
+      </:col>
       <:action :let={{_id, assignment}}>
         <%= if is_nil(@course.finalized_at) do %>
           <.link navigate={~p"/courses/#{@course}/assignments/#{assignment}/edit"}>

@@ -6,7 +6,7 @@ defmodule Skool.Courses.Assignment do
   alias Skool.Repo
 
   @kinds [:task, :checklist, :recurring]
-  @base_attrs [:title, :grade_weight, :kind, :course_id]
+  @base_attrs [:title, :kind, :course_id]
 
   schema "assignments" do
     field :title, :string
@@ -47,7 +47,15 @@ defmodule Skool.Courses.Assignment do
     |> cast(
       attrs,
       @base_attrs ++
-        [:description, :start_date, :end_date, :repeats_every, :repeats_every_unit, :repeats_on]
+        [
+          :grade_weight,
+          :description,
+          :start_date,
+          :end_date,
+          :repeats_every,
+          :repeats_every_unit,
+          :repeats_on
+        ]
     )
     |> validate_required(
       @base_attrs ++ [:start_date, :end_date, :repeats_every, :repeats_every_unit]
@@ -58,7 +66,7 @@ defmodule Skool.Courses.Assignment do
 
   defp cast_and_validate_required(assignment, attrs) do
     assignment
-    |> cast(attrs, @base_attrs ++ [:description, :due_date])
+    |> cast(attrs, @base_attrs ++ [:grade_weight, :description, :due_date])
     |> validate_required(@base_attrs ++ [:due_date])
   end
 

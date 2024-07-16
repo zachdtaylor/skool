@@ -19,13 +19,10 @@ defmodule Skool.Courses do
   end
 
   @doc """
-  Returns the list of assignments for a course.
+  Preloads the assignments for a course.
   """
-  def load_assignments(%Course{} = course) do
-    from(a in Assignment,
-      where: a.course_id == ^course.id
-    )
-    |> Repo.all()
+  def preload_assignments(%Course{} = course) do
+    Repo.preload(course, :assignments)
   end
 
   @doc """
@@ -326,5 +323,21 @@ defmodule Skool.Courses do
       |> Repo.one()
 
     !is_nil(enrollment)
+  end
+
+  @doc """
+  Splits the weights of the course evenly among all assignments.
+  """
+  def split_weights!(%Course{} = course) do
+    assignments = course.assignments
+    weight_each = 1 / length(assignments)
+
+    assignments
+    |> Enum.map(&Assignment.changeset(&1, %{grade_weight: weight_each}))
+    |> Enum.map(&Repo.update!(&1))
+
+    course.id
+    |> get_course!()
+    |> preload_assignments()
   end
 end

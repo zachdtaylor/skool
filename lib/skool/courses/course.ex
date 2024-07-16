@@ -3,6 +3,7 @@ defmodule Skool.Courses.Course do
   import Ecto.Changeset
 
   alias Skool.Accounts.User
+  alias Skool.Courses.Assignment
   alias Skool.Courses.CourseCollaborator
 
   schema "courses" do
@@ -13,6 +14,8 @@ defmodule Skool.Courses.Course do
     field :end_date, :date
     field :deleted_at, :utc_datetime
     field :finalized_at, :utc_datetime
+
+    has_many :assignments, Assignment
 
     belongs_to :created_by, User
 

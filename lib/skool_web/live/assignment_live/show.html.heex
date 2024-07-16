@@ -30,7 +30,7 @@
         <%= format_date(@assignment.due_date) %>
       </:item>
       <:item title="Grade Weight">
-        <%= @assignment.grade_weight * 100 %>%
+        <%= format_percent(@assignment.grade_weight) %>
       </:item>
       <:item title="Repeats" if={@assignment.kind == :recurring}>
         <%= display_repeats(@assignment) %>

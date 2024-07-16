@@ -69,4 +69,19 @@ defmodule SkoolWeb.HTMLHelpers do
     |> Decimal.from_float()
     |> Decimal.round(places)
   end
+
+  @doc """
+  Formats the given grade weight
+  """
+  def format_percent(nil), do: ""
+
+  def format_percent(x) when is_number(x) do
+    pct =
+      x
+      |> Kernel.*(100)
+      |> Float.round(2)
+      |> Float.to_string()
+
+    "#{pct}%"
+  end
 end
