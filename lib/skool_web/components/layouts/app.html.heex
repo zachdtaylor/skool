@@ -1,5 +1,42 @@
-<div class="flex h-full">
-  <header class="bg-slate-50 flex flex-col w-60 justify-between h-full">
+<div class="flex flex-col md:flex-row h-full">
+  <header class="md:hidden shadow-md">
+    <div class="flex justify-between bg-slate-50 p-1">
+      <.link href="/">
+        <img src={~p"/images/skool.svg"} width="76" class="p-2" />
+      </.link>
+      <button type="button" class="px-2" phx-click={JS.toggle(to: "#mobile-app-nav-menu")}>
+        <.icon name="hero-bars-3" />
+      </button>
+    </div>
+    <div id="mobile-app-nav-menu" class="hidden">
+      <ul>
+        <%= if @current_user do %>
+          <.app_nav_link
+            icon="hero-clipboard-document-list"
+            text="Courses"
+            navigate={~p"/courses"}
+          />
+          <.app_nav_link icon="hero-check" text="Tasks" navigate={~p"/tasks"} />
+          <.app_nav_link icon="hero-academic-cap" text="Grades" navigate={~p"/grades"} />
+          <.app_nav_link icon="hero-cog-6-tooth" text="Settings" href={~p"/users/settings"} />
+          <.app_nav_link
+            icon="hero-arrow-right-on-rectangle"
+            text="Log out"
+            href={~p"/users/log_out"}
+            method="delete"
+          />
+        <% else %>
+          <.app_nav_link icon="hero-clipboard" text="Register" href={~p"/users/register"} />
+          <.app_nav_link
+            icon="hero-arrow-left-on-rectangle"
+            text="Log in"
+            href={~p"/users/log_in"}
+          />
+        <% end %>
+      </ul>
+    </div>
+  </header>
+  <header class="bg-slate-50 md:flex flex-col w-60 justify-between h-full hidden">
     <div>
       <div class="flex justify-center py-8">
         <.link href="/">

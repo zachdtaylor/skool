@@ -3,6 +3,7 @@ defmodule SkoolWeb.Layouts do
 
   embed_templates "layouts/*"
 
+  attr :class, :string, doc: "Additional classes to apply to the nav link", default: ""
   attr :icon, :string, doc: "The name of the icon to render"
   attr :text, :string, doc: "The text to render"
   attr :href, :string, doc: "The href to link to"
@@ -11,10 +12,14 @@ defmodule SkoolWeb.Layouts do
 
   defp app_nav_link(assigns) do
     ~H"""
-    <li class="p-2 grid grid-cols-[min-content_1fr] items-center gap-x-2 hover:bg-white transition-colors duration-300 rounded-sm">
+    <li class={[
+      "px-2 grid grid-cols-[min-content_1fr] items-center gap-x-2 hover:bg-white transition-colors duration-300 rounded-sm",
+      "border-b border-b-solid border-b-slate-200",
+      "md:border-b-0"
+    ]}>
       <.icon name={@icon} class="text-zinc-900" />
       <.link
-        class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold"
+        class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold py-4 md:py-2"
         navigate={if assigns[:navigate], do: @navigate}
         href={if assigns[:href], do: @href}
         method={@method}
