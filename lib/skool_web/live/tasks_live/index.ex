@@ -12,7 +12,7 @@ defmodule SkoolWeb.TasksLive.Index do
   def handle_event("complete", %{"task_id" => id}, socket) do
     {:ok, _} = Tasks.complete_task(id)
 
-    {:noreply, stream_tasks(socket)}
+    {:noreply, socket |> stream_tasks() |> stream_week_tasks()}
   end
 
   defp assign_todays_date(socket) do
