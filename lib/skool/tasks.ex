@@ -71,7 +71,8 @@ defmodule Skool.Tasks do
       from t in Task,
         where: t.user_id == ^user.id,
         where: t.due_date >= ^start_date,
-        where: t.due_date <= ^end_date
+        where: t.due_date <= ^end_date,
+        order_by: [asc: t.due_date]
 
     query
     |> Repo.all()
