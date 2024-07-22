@@ -582,7 +582,7 @@ defmodule SkoolWeb.CoreComponents do
       end
 
     ~H"""
-    <div class="overflow-y-auto px-4 sm:overflow-visible sm:px-0">
+    <div class="overflow-x-auto overflow-y-hidden px-4 sm:overflow-visible sm:px-0">
       <table class="w-[40rem] mt-4 sm:w-full">
         <thead class="text-sm text-left leading-6 text-zinc-500">
           <tr>
@@ -722,7 +722,7 @@ defmodule SkoolWeb.CoreComponents do
     <div class={[
       "rounded-full border border-green-500 bg-green-200 px-3 py-1",
       "grid grid-cols-[min-content_1fr] items-center gap-1",
-      "text-sm text-green-800"
+      "text-sm text-green-800 whitespace-nowrap"
     ]}>
       <.icon name="hero-check" class="w-4 h-4" />
       <%= render_slot(@inner_block) %>
@@ -734,7 +734,7 @@ defmodule SkoolWeb.CoreComponents do
     ~H"""
     <div class={[
       "rounded-full border border-yellow-500 bg-yellow-200 px-3 py-1 items-center gap-1",
-      "text-sm text-yellow-800"
+      "text-sm text-yellow-800 whitespace-nowrap"
     ]}>
       <%= render_slot(@inner_block) %>
     </div>
@@ -745,7 +745,7 @@ defmodule SkoolWeb.CoreComponents do
     ~H"""
     <div class={[
       "rounded-full border border-slate-500 bg-slate-200 px-3 py-1 items-center gap-1",
-      "text-sm text-slate-800"
+      "text-sm text-slate-800 whitespace-nowrap"
     ]}>
       <%= render_slot(@inner_block) %>
     </div>
