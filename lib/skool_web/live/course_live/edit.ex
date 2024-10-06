@@ -3,6 +3,36 @@ defmodule SkoolWeb.CourseLive.Edit do
 
   alias Skool.Courses
 
+  @impl true
+  def render(assigns) do
+    ~H"""
+    <div class="h-full flex flex-col relative">
+      <.header>
+        Edit Course
+        <:subtitle><%= @course_name %></:subtitle>
+      </.header>
+      <div class="p-4">
+        <.form id="edit-course-form" for={@form} class="flex flex-col gap-4" phx-submit="save">
+          <.input type="hidden" field={@form[:id]} />
+          <.input type="hidden" field={@form[:created_by_id]} />
+          <.input type="text" field={@form[:name]} label="Name" />
+          <div class="grid grid-cols-2 gap-4">
+            <.input type="date" field={@form[:start_date]} label="Start Date" />
+            <.input type="date" field={@form[:end_date]} label="End Date" />
+          </div>
+          <.input type="textarea" field={@form[:description]} label="Description" />
+        </.form>
+      </div>
+      <.footer>
+        <:right>
+          <.button type="submit" form="edit-course-form">Save</.button>
+        </:right>
+      </.footer>
+    </div>
+    """
+  end
+
+  @impl true
   def mount(%{"id" => id}, _session, socket) do
     course = Courses.get_course!(id)
     changeset = Courses.change_course(course)
@@ -14,6 +44,7 @@ defmodule SkoolWeb.CourseLive.Edit do
      |> assign(:active_tab, :courses)}
   end
 
+  @impl true
   def handle_event("save", %{"course" => course_params}, socket) do
     course = Courses.get_course!(course_params["id"])
 
