@@ -13,7 +13,8 @@ defmodule SkoolWeb.CourseLive.Collaborators do
      |> assign_course_name(course)
      |> assign_created_by_name(course)
      |> assign_search_results(nil)
-     |> assign_collaborators(course)}
+     |> assign_collaborators(course)
+     |> assign(:active_tab, :courses)}
   end
 
   def handle_params(%{"id" => id}, url, socket) do

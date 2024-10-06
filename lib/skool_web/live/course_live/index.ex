@@ -52,7 +52,10 @@ defmodule SkoolWeb.CourseLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, stream(socket, :courses, Courses.list_courses(socket.assigns.current_user))}
+    {:ok,
+     socket
+     |> stream(:courses, Courses.list_courses(socket.assigns.current_user))
+     |> assign(:active_tab, :courses)}
   end
 
   @impl true

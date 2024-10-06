@@ -6,7 +6,7 @@ defmodule SkoolWeb.CourseLive.New do
 
   def mount(_params, _session, socket) do
     changeset = Courses.change_course(%Course{})
-    {:ok, socket |> assign_form(changeset)}
+    {:ok, socket |> assign_form(changeset) |> assign(:active_tab, :courses)}
   end
 
   def handle_event("create", %{"course" => course}, socket) do

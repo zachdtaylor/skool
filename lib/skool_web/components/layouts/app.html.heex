@@ -15,10 +15,26 @@
             icon="hero-clipboard-document-list"
             text="Courses"
             navigate={~p"/courses"}
+            active?={@active_tab == :courses}
           />
-          <.app_nav_link icon="hero-check" text="Tasks" navigate={~p"/tasks"} />
-          <.app_nav_link icon="hero-academic-cap" text="Grades" navigate={~p"/grades"} />
-          <.app_nav_link icon="hero-cog-6-tooth" text="Settings" href={~p"/users/settings"} />
+          <.app_nav_link
+            icon="hero-check"
+            text="Tasks"
+            navigate={~p"/tasks"}
+            active?={@active_tab == :tasks}
+          />
+          <.app_nav_link
+            icon="hero-academic-cap"
+            text="Grades"
+            navigate={~p"/grades"}
+            active?={@active_tab == :grades}
+          />
+          <.app_nav_link
+            icon="hero-cog-6-tooth"
+            text="Settings"
+            href={~p"/users/settings"}
+            active?={@active_tab == :settings}
+          />
           <.app_nav_link
             icon="hero-arrow-right-on-rectangle"
             text="Log out"
@@ -49,9 +65,20 @@
             icon="hero-clipboard-document-list"
             text="Courses"
             navigate={~p"/courses"}
+            active?={@active_tab == :courses}
           />
-          <.app_nav_link icon="hero-check" text="Tasks" navigate={~p"/tasks"} />
-          <.app_nav_link icon="hero-academic-cap" text="Grades" navigate={~p"/grades"} />
+          <.app_nav_link
+            icon="hero-check"
+            text="Tasks"
+            navigate={~p"/tasks"}
+            active?={@active_tab == :tasks}
+          />
+          <.app_nav_link
+            icon="hero-academic-cap"
+            text="Grades"
+            navigate={~p"/grades"}
+            active?={@active_tab == :grades}
+          />
         </ul>
       <% end %>
     </div>
@@ -61,7 +88,12 @@
           <%= @current_user.full_name %>
           <span class="text-xs text-gray-500"><%= @current_user.email %></span>
         </li>
-        <.app_nav_link icon="hero-cog-6-tooth" text="Settings" href={~p"/users/settings"} />
+        <.app_nav_link
+          icon="hero-cog-6-tooth"
+          text="Settings"
+          href={~p"/users/settings"}
+          active?={@active_tab == :settings}
+        />
         <.app_nav_link
           icon="hero-arrow-right-on-rectangle"
           text="Log out"
