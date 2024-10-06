@@ -23,7 +23,8 @@ defmodule SkoolWeb.ChecklistItemLive.Edit do
      |> assign(:page_title, "Edit Checklist Item")
      |> assign(:course, course)
      |> assign(:assignment, assignment)
-     |> assign_form(changeset)}
+     |> assign_form(changeset)
+     |> assign(:active_tab, :courses)}
   end
 
   def handle_event("save", %{"checklist_item" => checklist_item_params}, socket) do

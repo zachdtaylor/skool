@@ -99,6 +99,7 @@ defmodule SkoolWeb.UserSettingsLive do
       |> assign(:email_form, to_form(email_changeset))
       |> assign(:password_form, to_form(password_changeset))
       |> assign(:trigger_submit, false)
+      |> assign(:active_tab, :settings)
 
     {:ok, socket}
   end

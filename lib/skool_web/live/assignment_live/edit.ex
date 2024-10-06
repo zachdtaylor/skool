@@ -22,7 +22,8 @@ defmodule SkoolWeb.AssignmentLive.Edit do
      |> assign(:page_title, "Edit Assignment")
      |> assign(:course, course)
      |> assign(:assignment, assignment)
-     |> assign_form(changeset)}
+     |> assign_form(changeset)
+     |> assign(:active_tab, :courses)}
   end
 
   def handle_event("save", %{"assignment" => assignment_params}, socket) do

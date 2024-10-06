@@ -5,7 +5,13 @@ defmodule SkoolWeb.TasksLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, socket |> assign_todays_date() |> stream_tasks() |> stream_week_tasks()}
+    {:ok,
+     socket
+     |> assign_todays_date()
+     |> stream_tasks()
+     |> stream_week_tasks()
+     |> assign(:active_tab, :tasks)
+     |> assign(:page_title, "Tasks")}
   end
 
   @impl true

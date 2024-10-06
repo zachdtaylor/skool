@@ -10,7 +10,8 @@ defmodule SkoolWeb.CourseLive.Edit do
     {:ok,
      socket
      |> assign_course_name(course)
-     |> assign_form(changeset)}
+     |> assign_form(changeset)
+     |> assign(:active_tab, :courses)}
   end
 
   def handle_event("save", %{"course" => course_params}, socket) do

@@ -17,7 +17,8 @@ defmodule SkoolWeb.CourseLive.Show do
      |> assign(:page_title, course.name)
      |> assign(:course, course)
      |> assign(:enrolled?, Courses.is_enrolled?(course, socket.assigns.current_user))
-     |> stream(:assignments, course.assignments)}
+     |> stream(:assignments, course.assignments)
+     |> assign(:active_tab, :courses)}
   end
 
   @impl true
