@@ -125,7 +125,6 @@ defmodule SkoolWeb.AssignmentLive.New do
     result =
       assignment_params
       |> transform_repeats_on()
-      |> IO.inspect(label: "params")
       |> Courses.create_assignment()
 
     case result do
