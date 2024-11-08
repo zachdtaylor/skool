@@ -102,7 +102,7 @@ defmodule SkoolWeb.AssignmentLive.Show do
   def handle_params(%{"course_id" => course_id, "assignment_id" => assignment_id}, _, socket) do
     course = Courses.get_course!(course_id)
     assignment = Courses.get_assignment!(assignment_id)
-    checklist_items = Courses.load_checklist_items(assignment) |> IO.inspect()
+    checklist_items = Courses.load_checklist_items(assignment)
 
     {:noreply,
      socket
