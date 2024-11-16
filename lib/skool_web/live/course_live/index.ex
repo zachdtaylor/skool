@@ -21,7 +21,11 @@ defmodule SkoolWeb.CourseLive.Index do
           rows={@streams.courses}
           row_click={fn {_id, course} -> JS.navigate(~p"/courses/#{course.id}") end}
         >
-          <:col :let={{_id, course}} label="Name"><%= course.name %></:col>
+          <:col :let={{_id, course}} label="Name">
+            <div class="grid grid-cols-[1rem_1fr] gap-3 items-center">
+              <div class="rounded-full w-4 h-4" style={"background: #{course.color}"} /><%= course.name %>
+            </div>
+          </:col>
           <:col :let={{_id, course}} label="Start Date"><%= format_date(course.start_date) %></:col>
           <:col :let={{_id, course}} label="End Date"><%= format_date(course.end_date) %></:col>
           <:col :let={{_id, course}} label="Status">

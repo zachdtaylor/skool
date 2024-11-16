@@ -14,6 +14,7 @@ defmodule Skool.Courses.Course do
     field :end_date, :date
     field :deleted_at, :utc_datetime
     field :finalized_at, :utc_datetime
+    field :color, :string, default: "#7752fe"
 
     has_many :assignments, Assignment
 
@@ -37,6 +38,7 @@ defmodule Skool.Courses.Course do
     course
     |> cast(attrs, [
       :name,
+      :color,
       :description,
       :category,
       :start_date,
@@ -44,6 +46,6 @@ defmodule Skool.Courses.Course do
       :created_by_id,
       :finalized_at
     ])
-    |> validate_required([:name, :start_date, :end_date, :created_by_id])
+    |> validate_required([:name, :color, :start_date, :end_date, :created_by_id])
   end
 end

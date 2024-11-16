@@ -57,6 +57,7 @@ defmodule Skool.Courses do
     |> or_where([c, cc], c.created_by_id == ^user.id and is_nil(c.deleted_at))
     |> select([course, _course_collaborator, enrollment], %Course{
       id: course.id,
+      color: course.color,
       name: course.name,
       start_date: course.start_date,
       end_date: course.end_date,
