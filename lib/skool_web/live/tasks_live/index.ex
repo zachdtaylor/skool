@@ -146,16 +146,18 @@ defmodule SkoolWeb.TasksLive.Index do
           </div>
           <div>
             <%= for task <- Map.get(@tasks, @day_of_month, []) do %>
-              <button
-                phx-click="toggle_complete"
-                phx-value-task_id={task.id}
-                class="w-4 h-4 rounded-full group relative inline-block md:mx-[2px]"
-                style={"background: #{if is_nil(task.completed_at), do: task.color, else: "#ccc"}"}
-              >
-                <div class="hidden group-hover:block bg-gray-200 rounded-md w-fit py-1 px-2 bottom-6 left-[50%] translate-x-[-50%] absolute whitespace-nowrap">
+              <div id={"tooltip-task-#{task.id}"} class="tooltip inline-block" phx-hook="Tooltip">
+                <button
+                  phx-click="toggle_complete"
+                  phx-value-task_id={task.id}
+                  class="w-4 h-4 rounded-full group md:mx-[2px] tooltip-trigger"
+                  style={"background: #{if is_nil(task.completed_at), do: task.color, else: "#ccc"}"}
+                />
+                <div class="bg-slate-900 text-white font-bold text-sm rounded-md w-max py-1 px-2 absolute top-0 left-0 tooltip-content hidden">
                   <%= task.title %>
+                  <div class="tooltip-arrow absolute bg-slate-900 w-2 h-2 rotate-45" />
                 </div>
-              </button>
+              </div>
             <% end %>
           </div>
         <% end %>
