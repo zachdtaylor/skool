@@ -123,3 +123,41 @@ Skool.Repo.insert!(%Skool.Courses.ChecklistItem{
   due_date: Seeds.Helpers.date_today() |> Date.shift(month: 3),
   assignment_id: reading_assignment.id
 })
+
+career_course =
+  Skool.Repo.insert!(%Skool.Courses.Course{
+    name: "Advancing Your Career",
+    description: "In this course, I want to make consious steps to advance my career.",
+    created_by_id: zach.id,
+    start_date: Seeds.Helpers.date_today(),
+    end_date: Seeds.Helpers.date_today() |> Date.shift(month: 3, day: -1),
+    color: "#253342"
+  })
+
+Skool.Repo.insert!(%Skool.Courses.Assignment{
+  title: "Update A Remix Lesson",
+  description:
+    "Taking ownership of a creation of mine is something I feel will be important in my career.",
+  kind: :recurring,
+  grade_weight: 0.5,
+  start_date: Seeds.Helpers.date_today(),
+  end_date: Seeds.Helpers.date_today() |> Date.shift(month: 3),
+  repeats_every: 1,
+  repeats_every_unit: :week,
+  repeats_on: "sunday.wednesday.saturday",
+  course_id: career_course.id
+})
+
+Skool.Repo.insert!(%Skool.Courses.Assignment{
+  title: "Add a feature to Skool",
+  description:
+    "Skool has potential - I want to make it better. I want to make it something that I'm proud of and that I can get other people to use.",
+  kind: :recurring,
+  grade_weight: 0.5,
+  start_date: Seeds.Helpers.date_today(),
+  end_date: Seeds.Helpers.date_today() |> Date.shift(month: 3),
+  repeats_every: 2,
+  repeats_every_unit: :week,
+  repeats_on: "monday",
+  course_id: career_course.id
+})
