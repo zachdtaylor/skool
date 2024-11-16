@@ -20,6 +20,7 @@ defmodule SkoolWeb.CourseLive.Edit do
             <.input type="date" field={@form[:start_date]} label="Start Date" />
             <.input type="date" field={@form[:end_date]} label="End Date" />
           </div>
+          <.input type="color" field={@form[:color]} label="Color" />
           <.input type="textarea" field={@form[:description]} label="Description" />
         </.form>
       </div>

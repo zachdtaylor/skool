@@ -31,6 +31,31 @@ defmodule Skool.Tasks do
     Repo.all(query)
   end
 
+  def tasks_for_month(year, month) do
+    first_of_month = Date.new!(year, month, 1)
+
+    query =
+      from t in Task,
+        left_join: a in Assignment,
+        on: t.assignment_id == a.id,
+        left_join: c in ChecklistItem,
+        on: t.checklist_item_id == c.id,
+        left_join: course in Course,
+        on: a.course_id == course.id,
+        where: t.due_date >= ^first_of_month,
+        where: t.due_date <= ^Date.end_of_month(first_of_month),
+        order_by: [asc: t.id],
+        select: %{
+          id: t.id,
+          due_date: t.due_date,
+          title: coalesce(c.title, a.title),
+          color: course.color,
+          completed_at: t.completed_at
+        }
+
+    Repo.all(query)
+  end
+
   @doc """
   Returns the list of tasks for the provided user and date.
 
@@ -78,11 +103,12 @@ defmodule Skool.Tasks do
     |> Repo.preload(assignment: [:course], checklist_item: [])
   end
 
-  def complete_task(id) do
+  def toggle_completed_at(id) do
     task = Repo.get!(Task, id)
+    value = if is_nil(task.completed_at), do: DateTime.utc_now(), else: nil
 
     task
-    |> change_task(%{completed_at: DateTime.utc_now()})
+    |> change_task(%{completed_at: value})
     |> Repo.update()
   end
 
