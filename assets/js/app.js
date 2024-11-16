@@ -20,6 +20,7 @@ import "phoenix_html";
 // Establish Phoenix Socket and LiveView configuration.
 import { Socket } from "phoenix";
 import { LiveSocket } from "phoenix_live_view";
+import { computePosition, flip, shift, offset, arrow } from "@floating-ui/dom";
 import topbar from "../vendor/topbar";
 
 let Hooks = {};
@@ -39,6 +40,66 @@ Hooks.OptimisticRemove = {
       let elToRemove = document.getElementById(removeId);
       elToRemove.remove();
       this.pushEvent(event, payload);
+    });
+  },
+};
+
+Hooks.Tooltip = {
+  mounted() {
+    const button = this.el.querySelector(".tooltip-trigger");
+    const tooltip = this.el.querySelector(".tooltip-content");
+    const arrowEl = this.el.querySelector(".tooltip-arrow");
+
+    function update() {
+      computePosition(button, tooltip, {
+        placement: "top",
+        middleware: [
+          flip(),
+          shift({ padding: 5 }),
+          offset(6),
+          arrow({ element: arrowEl }),
+        ],
+      }).then(({ x, y, placement, middlewareData }) => {
+        Object.assign(tooltip.style, {
+          left: `${x}px`,
+          top: `${y}px`,
+        });
+
+        const { x: arrowX, y: arrowY } = middlewareData.arrow;
+
+        const staticSide = {
+          top: "bottom",
+          right: "left",
+          bottom: "top",
+          left: "right",
+        }[placement.split("-")[0]];
+
+        Object.assign(arrowEl.style, {
+          left: arrowX != null ? `${arrowX}px` : "",
+          top: arrowY != null ? `${arrowY}px` : "",
+          right: "",
+          bottom: "",
+          [staticSide]: "-4px",
+        });
+      });
+    }
+
+    function showTooltip() {
+      tooltip.style.display = "block";
+      update();
+    }
+
+    function hideTooltip() {
+      tooltip.style.display = "";
+    }
+
+    [
+      ["mouseenter", showTooltip],
+      ["mouseleave", hideTooltip],
+      ["focus", showTooltip],
+      ["blur", hideTooltip],
+    ].forEach(([event, listener]) => {
+      button.addEventListener(event, listener);
     });
   },
 };
