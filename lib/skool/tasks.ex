@@ -31,7 +31,7 @@ defmodule Skool.Tasks do
     Repo.all(query)
   end
 
-  def tasks_for_month(year, month) do
+  def tasks_for_month(%User{} = user, year, month) do
     first_of_month = Date.new!(year, month, 1)
 
     query =
@@ -44,6 +44,7 @@ defmodule Skool.Tasks do
         on: a.course_id == course.id,
         where: t.due_date >= ^first_of_month,
         where: t.due_date <= ^Date.end_of_month(first_of_month),
+        where: t.user_id == ^user.id,
         order_by: [asc: t.id],
         select: %{
           id: t.id,

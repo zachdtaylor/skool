@@ -94,8 +94,8 @@ defmodule SkoolWeb.TasksLive.Index do
 
   defp assign_tasks(socket) do
     tasks =
-      socket.assigns.current_year
-      |> Tasks.tasks_for_month(socket.assigns.current_month)
+      socket.assigns.current_user
+      |> Tasks.tasks_for_month(socket.assigns.current_year, socket.assigns.current_month)
       |> Enum.group_by(& &1.due_date.day)
 
     assign(socket, tasks: tasks)
