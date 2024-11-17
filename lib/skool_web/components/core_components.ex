@@ -20,6 +20,56 @@ defmodule SkoolWeb.CoreComponents do
   import SkoolWeb.Gettext
 
   @doc """
+  Renders a tooltip.
+
+  This component must wrap `tooltip_trigger` and `tooltip_content` in order for
+  those components to work correctly.
+  """
+  attr :id, :string, required: true
+  slot :inner_block, required: true
+
+  def tooltip(assigns) do
+    ~H"""
+    <div id={@id} class="inline-block" phx-hook="Tooltip">
+      <%= render_slot(@inner_block) %>
+    </div>
+    """
+  end
+
+  @doc """
+  Renders a tooltip trigger.
+
+  This defines the element that will make the tooltip appear when hovered.
+  """
+  attr :class, :string, default: nil
+  attr :rest, :global
+  slot :inner_block, required: false
+
+  def tooltip_trigger(assigns) do
+    ~H"""
+    <button class={["tooltip-trigger", @class]} {@rest}>
+      <%= render_slot(@inner_block) %>
+    </button>
+    """
+  end
+
+  @doc """
+  Renders tooltip content.
+
+  This defines the content that will be shown when the trigger is hovered.
+  """
+  slot :inner_block, required: true
+
+  def tooltip_content(assigns) do
+    ~H"""
+    <div class="bg-slate-900 text-white font-bold text-sm rounded-md w-max py-1 px-2 absolute top-0 left-0 tooltip-content hidden">
+      <%= render_slot(@inner_block) %>
+      <div class="tooltip-arrow absolute bg-slate-900 w-2 h-2 rotate-45" />
+    </div>
+    """
+  end
+
+  @doc """
   Renders a modal.
 
   ## Examples
