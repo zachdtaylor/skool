@@ -2,8 +2,9 @@ defmodule Skool.Courses do
   @moduledoc """
   The Courses context.
   """
-
   import Ecto.Query, warn: false
+
+  alias Skool.DateHelpers
   alias Skool.Repo
 
   alias Skool.Courses.{Assignment, ChecklistItem, Course, CourseCollaborator, Enrollment}
@@ -48,13 +49,16 @@ defmodule Skool.Courses do
       [%Course{}, ...]
 
   """
-  def list_courses(user) do
+  def list_courses(user, opts \\ []) do
+    timeframe = Keyword.get(opts, :timeframe, :all)
+
     Course
     |> from()
     |> join(:left, [c], cc in CourseCollaborator, on: cc.course_id == c.id)
     |> join(:left, [c], e in Enrollment, on: e.course_id == c.id and e.user_id == ^user.id)
     |> where([c, cc], cc.collaborator_id == ^user.id and is_nil(c.deleted_at))
     |> or_where([c, cc], c.created_by_id == ^user.id and is_nil(c.deleted_at))
+    |> where_in_timeframe(user, timeframe)
     |> select([course, _course_collaborator, enrollment], %Course{
       id: course.id,
       color: course.color,
@@ -74,6 +78,24 @@ defmodule Skool.Courses do
       finalized_at: course.finalized_at
     })
     |> Repo.all()
+  end
+
+  defp where_in_timeframe(query, _user, :all), do: query
+
+  defp where_in_timeframe(query, user, :current) do
+    today = DateHelpers.today(user)
+
+    query
+    |> where([c], c.end_date >= ^today)
+    |> where([c], c.start_date <= ^today)
+  end
+
+  defp where_in_timeframe(query, user, :upcoming) do
+    where(query, [c], c.start_date > ^DateHelpers.today(user))
+  end
+
+  defp where_in_timeframe(query, user, :past) do
+    where(query, [c], c.end_date < ^DateHelpers.today(user))
   end
 
   @doc """

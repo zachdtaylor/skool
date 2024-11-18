@@ -5,6 +5,9 @@ defmodule Skool.DateHelpers do
 
   alias Skool.Accounts.User
 
+  @doc """
+  Returns the current date in the user's preferred timezone.
+  """
   @spec today(User.t()) :: Date.t()
   def today(%User{} = user) do
     DateTime.utc_now()

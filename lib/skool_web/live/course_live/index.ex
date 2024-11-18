@@ -16,39 +16,12 @@ defmodule SkoolWeb.CourseLive.Index do
         </:actions>
       </.header>
       <div class="p-4">
-        <.table
-          id="courses"
-          rows={@streams.courses}
-          row_click={fn {_id, course} -> JS.navigate(~p"/courses/#{course.id}") end}
-        >
-          <:col :let={{_id, course}} label="Name">
-            <div class="grid grid-cols-[1rem_1fr] gap-3 items-center">
-              <div class="rounded-full w-4 h-4" style={"background: #{course.color}"} /><%= course.name %>
-            </div>
-          </:col>
-          <:col :let={{_id, course}} label="Start Date"><%= format_date(course.start_date) %></:col>
-          <:col :let={{_id, course}} label="End Date"><%= format_date(course.end_date) %></:col>
-          <:col :let={{_id, course}} label="Status">
-            <div class="w-fit">
-              <%= case course.status do %>
-                <% "enrolled" -> %>
-                  <.badge type="success">Enrolled</.badge>
-                <% "finalized" -> %>
-                  <.badge type="caution">Finalized</.badge>
-                <% _ -> %>
-                  <.badge type="info">In Progress</.badge>
-              <% end %>
-            </div>
-          </:col>
-          <:action :let={{_id, course}}>
-            <div class="sr-only">
-              <.link navigate={~p"/courses/#{course.id}"}>Show</.link>
-            </div>
-            <%= if is_nil(course.finalized_at) do %>
-              <.link navigate={~p"/courses/#{course.id}/edit"}>Edit</.link>
-            <% end %>
-          </:action>
-        </.table>
+        <h1 class="font-bold">Current</h1>
+        <.course_table courses={@streams.current_courses} />
+        <h1 class="font-bold mt-8">Upcoming</h1>
+        <.course_table courses={@streams.upcoming_courses} />
+        <h1 class="font-bold mt-8">Past</h1>
+        <.course_table courses={@streams.past_courses} />
       </div>
     </div>
     """
@@ -58,7 +31,15 @@ defmodule SkoolWeb.CourseLive.Index do
   def mount(_params, _session, socket) do
     {:ok,
      socket
-     |> stream(:courses, Courses.list_courses(socket.assigns.current_user))
+     |> stream(
+       :current_courses,
+       Courses.list_courses(socket.assigns.current_user, timeframe: :current)
+     )
+     |> stream(
+       :upcoming_courses,
+       Courses.list_courses(socket.assigns.current_user, timeframe: :upcoming)
+     )
+     |> stream(:past_courses, Courses.list_courses(socket.assigns.current_user, timeframe: :past))
      |> assign(:active_tab, :courses)}
   end
 
@@ -68,5 +49,43 @@ defmodule SkoolWeb.CourseLive.Index do
     {:ok, _} = Courses.delete_course(course)
 
     {:noreply, stream_delete(socket, :courses, course)}
+  end
+
+  defp course_table(assigns) do
+    ~H"""
+    <.table
+      id="current_courses"
+      rows={@courses}
+      row_click={fn {_id, course} -> JS.navigate(~p"/courses/#{course.id}") end}
+    >
+      <:col :let={{_id, course}} label="Name">
+        <div class="grid grid-cols-[1rem_1fr] gap-3 items-center">
+          <div class="rounded-full w-4 h-4" style={"background: #{course.color}"} /><%= course.name %>
+        </div>
+      </:col>
+      <:col :let={{_id, course}} label="Start Date"><%= format_date(course.start_date) %></:col>
+      <:col :let={{_id, course}} label="End Date"><%= format_date(course.end_date) %></:col>
+      <:col :let={{_id, course}} label="Status">
+        <div class="w-fit">
+          <%= case course.status do %>
+            <% "enrolled" -> %>
+              <.badge type="success">Enrolled</.badge>
+            <% "finalized" -> %>
+              <.badge type="caution">Finalized</.badge>
+            <% _ -> %>
+              <.badge type="info">In Progress</.badge>
+          <% end %>
+        </div>
+      </:col>
+      <:action :let={{_id, course}}>
+        <div class="sr-only">
+          <.link navigate={~p"/courses/#{course.id}"}>Show</.link>
+        </div>
+        <%= if is_nil(course.finalized_at) do %>
+          <.link navigate={~p"/courses/#{course.id}/edit"}>Edit</.link>
+        <% end %>
+      </:action>
+    </.table>
+    """
   end
 end
